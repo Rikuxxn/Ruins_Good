@@ -1,0 +1,37 @@
+﻿  Building Custom Rule C:/Users/student/Desktop/bullet3/src/Bullet3OpenCL/CMakeLists.txt
+  clew.c
+  b3GpuGridBroadphase.cpp
+C:\Users\student\Desktop\bullet3\src\Bullet3OpenCL\BroadphaseCollision\b3GpuGridBroadphase.cpp(248,23): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  b3GpuSapBroadphase.cpp
+  b3GpuParallelLinearBvhBroadphase.cpp
+  b3GpuParallelLinearBvh.cpp
+  b3OpenCLUtils.cpp
+  b3ContactCache.cpp
+  b3ConvexHullContact.cpp
+  b3GjkEpa.cpp
+  b3OptimizedBvh.cpp
+  b3QuantizedBvh.cpp
+  b3StridingMeshInterface.cpp
+  b3TriangleCallback.cpp
+  b3TriangleIndexVertexArray.cpp
+  b3VoronoiSimplexSolver.cpp
+  b3BoundSearchCL.cpp
+  b3FillCL.cpp
+  b3LauncherCL.cpp
+  b3PrefixScanCL.cpp
+  b3PrefixScanFloat4CL.cpp
+  b3RadixSort32CL.cpp
+  コードを生成中...
+  コンパイル中...
+  b3GpuRaycast.cpp
+C:\Users\student\Desktop\bullet3\src\Bullet3OpenCL\Raycast\b3GpuRaycast.cpp(302,24): warning C4018: '>': signed と unsigned の数値を比較しようとしました。
+  b3GpuGenericConstraint.cpp
+  b3GpuJacobiContactSolver.cpp
+  b3GpuNarrowPhase.cpp
+  b3GpuPgsConstraintSolver.cpp
+  b3GpuPgsContactSolver.cpp
+  b3GpuRigidBodyPipeline.cpp
+C:\Users\student\Desktop\bullet3\src\Bullet3OpenCL\RigidBody\b3GpuRigidBodyPipeline.cpp(67,49): warning C4316: 'b3GpuRigidBodyPipelineInternalData': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
+  b3Solver.cpp
+  コードを生成中...
+  Bullet3OpenCL_clew.vcxproj -> C:\Users\student\Desktop\bullet3\build_x86\lib\Release\Bullet3OpenCL_clew.lib

@@ -1,0 +1,6 @@
+﻿  Building Custom Rule C:/Users/student/Desktop/bullet3/src/Bullet3Common/CMakeLists.txt
+  b3AlignedAllocator.cpp
+  b3Vector3.cpp
+  b3Logging.cpp
+  コードを生成中...
+  Bullet3Common.vcxproj -> C:\Users\student\Desktop\bullet3\build_x86\lib\Release\Bullet3Common.lib

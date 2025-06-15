@@ -1,0 +1,35 @@
+﻿  Building Custom Rule C:/Users/student/Desktop/bullet3/src/BulletSoftBody/CMakeLists.txt
+  btSoftBody.cpp
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\btSoftBody.cpp(2600,40): warning C4316: 'btDbvntNode': ヒープで割り当てられたオブジェクトが 16 にアラインメントされていない可能性があります
+  btSoftBodyConcaveCollisionAlgorithm.cpp
+  btSoftBodyHelpers.cpp
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\btSoftBodyHelpers.cpp(1327,20): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  btSoftBodyRigidBodyCollisionConfiguration.cpp
+  btSoftRigidCollisionAlgorithm.cpp
+  btSoftRigidDynamicsWorld.cpp
+  btSoftMultiBodyDynamicsWorld.cpp
+  btSoftSoftCollisionAlgorithm.cpp
+  btDefaultSoftBodySolver.cpp
+  btDeformableBackwardEulerObjective.cpp
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\btDeformableBackwardEulerObjective.h(197,18): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  btDeformableBodySolver.cpp
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\btDeformableBackwardEulerObjective.h(197,18): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  btDeformableMultiBodyConstraintSolver.cpp
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\btDeformableBackwardEulerObjective.h(197,18): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  btDeformableContactProjection.cpp
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\btDeformableBackwardEulerObjective.h(197,18): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  btDeformableMultiBodyDynamicsWorld.cpp
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\btDeformableBackwardEulerObjective.h(197,18): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  btDeformableContactConstraint.cpp
+  poly34.cpp
+  btReducedDeformableBody.cpp
+  btReducedDeformableBodyHelpers.cpp
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodyHelpers.cpp(99,20): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodyHelpers.cpp(191,20): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\BulletReducedDeformableBody\btReducedDeformableBodyHelpers.cpp(193,21): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  btReducedDeformableBodySolver.cpp
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\btDeformableBackwardEulerObjective.h(197,18): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  btReducedDeformableContactConstraint.cpp
+  コードを生成中...
+C:\Users\student\Desktop\bullet3\src\BulletSoftBody\poly34.cpp(432): warning C4756: 定数演算でオーバーフローを起こしました。
+  BulletSoftBody.vcxproj -> C:\Users\student\Desktop\bullet3\build_x86\lib\Release\BulletSoftBody.lib
