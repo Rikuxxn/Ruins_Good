@@ -11,7 +11,6 @@
 #include "object.h"
 #include "shadow.h"
 
-
 // Xファイルクラス
 class CObjectX : public CObject
 {
@@ -28,18 +27,22 @@ public:
 		TYPE_MAX
 	}MODELTYPE;
 
-	static CObjectX* Create(const char* pFilepath, D3DXVECTOR3 pos, D3DXVECTOR3 rot);
+	static CObjectX* Create(const char* pFilepath, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 size);
 	HRESULT Init(void);
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
 	D3DXVECTOR3 GetPos(void);
 	void SetPath(const char* path);
+	void SetSize(D3DXVECTOR3 size);
+	void SetPos(D3DXVECTOR3 pos);
+	void SetRot(D3DXVECTOR3 rot);
 
 private:
 	int* m_nIdxTexture;
 	D3DXVECTOR3 m_pos;					// 位置
 	D3DXVECTOR3 m_rot;					// 向き
+	D3DXVECTOR3 m_size;					// サイズ
 	LPD3DXMESH m_pMesh;					// メッシュへのポインタ
 	LPD3DXBUFFER m_pBuffMat;			// マテリアルへのポインタ
 	DWORD m_dwNumMat;					// マテリアル数

@@ -21,6 +21,7 @@
 #include "camera.h"
 #include "light.h"
 #include "motion.h"
+#include "block.h"
 
 // マネージャークラス
 class CManager
@@ -50,6 +51,7 @@ public:
 	static CLight* GetLight(void);
 	static CModel* GetModel(void);
 	static CMotion* GetMotion(void);
+	static CBlock* GetBlock(void);
 
 	int GetFPS(int fps) { return m_fps = fps; };
 	static bool GetisPaused(void);
@@ -72,6 +74,7 @@ private:
 	static CLight* m_pLight;					// ライトへのポインタ
 	static CModel* m_pModel;					// モデルへのポインタ
 	static CMotion* m_pMotion;					// モーションへのポインタ
+	static CBlock* m_pBlock;					// ブロックへのポインタ
 
 	int m_fps;
 	static bool m_isPaused; // trueならポーズ中

@@ -31,6 +31,7 @@ CCamera* CManager::m_pCamera = NULL;
 CLight* CManager::m_pLight = NULL;
 CModel* CManager::m_pModel = NULL;
 CMotion* CManager::m_pMotion = NULL;
+CBlock* CManager::m_pBlock = NULL;
 
 bool CManager::m_isPaused = false;
 
@@ -63,7 +64,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd)
 	{
 		return -1;
 	}
-	
+
 	// キーボードの生成
 	m_pInputKeyboard = new CInputKeyboard;
 
@@ -126,25 +127,27 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd)
 	CLight::AddLight(D3DLIGHT_DIRECTIONAL, D3DXCOLOR(0.7f, 0.7f, 0.7f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	CLight::AddLight(D3DLIGHT_DIRECTIONAL, D3DXCOLOR(0.7f, 0.7f, 0.7f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
+	//// 3Dオブジェクトの生成
+	//CObject3D::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1200.0f, 1200.0f);
+
 	// メッシュフィールドの生成
 	CMeshfield::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1200.0f, 1200.0f);
 
 	// プレイヤーの生成
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 6.0f, -300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
-	// モデルの生成
-	CObjectX::Create("data/MODELS/bear.x", D3DXVECTOR3(0.0f, 5.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	CObjectX::Create("data/MODELS/wall.x", D3DXVECTOR3(500.0f, 110.0f, 0.0f), D3DXVECTOR3(0.0f, 90.0f, 0.0f));
-	CObjectX::Create("data/MODELS/test_block.x", D3DXVECTOR3(-500.0f, 110.0f, 200.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	// ブロックの生成
+	m_pBlock = CBlock::Create("data/MODELS/bear.x", D3DXVECTOR3(200.0f, 5.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	m_pBlock = CBlock::Create("data/MODELS/test_block.x", D3DXVECTOR3(-300.0f, 110.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 1.0f, 3.0f));
 
 	//// ビルボードの生成
 	//CObjectBillboard::Create(CObjectBillboard::TYPE_ONE, D3DXVECTOR3(0.0f, 20.0f, -350.0f), 120.0f, 60.0f);
 
 	// スコアの生成
-	m_pScore = CScore::Create(920.0f,10.0f,42.0f,58.0f);
+	m_pScore = CScore::Create(920.0f, 10.0f, 42.0f, 58.0f);
 
 	// タイムの生成
-	m_pTime = CTime::Create(12,15,600.0f,10.0f,42.0f,58.0f);
+	m_pTime = CTime::Create(12, 15, 600.0f, 10.0f, 42.0f, 58.0f);
 
 	// コロンの生成
 	m_pColon = CColon::Create(D3DXVECTOR3(600.0f + 2 * 42.0f, 10.0f, 0.0f), 42.0f / 2, 58.0f);
@@ -475,6 +478,13 @@ CModel* CManager::GetModel(void)
 CMotion* CManager::GetMotion(void)
 {
 	return m_pMotion;
+}
+//=======================================
+// ブロックの取得
+//=======================================
+CBlock* CManager::GetBlock(void)
+{
+	return m_pBlock;
 }
 //=======================================
 // ポーズ中かどうかの取得

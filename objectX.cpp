@@ -15,14 +15,15 @@ CObjectX::CObjectX()
 {
 	// 値のクリア
 	m_nIdxTexture = 0;
-	m_pos		  = INIT_VEC3;					// 位置
-	m_rot		  = INIT_VEC3;					// 向き
-	m_pMesh		  = NULL;						// メッシュへのポインタ
-	m_pBuffMat	  = NULL;						// マテリアルへのポインタ
-	m_dwNumMat	  = NULL;						// マテリアル数
-	m_mtxWorld	  = {};							// ワールドマトリックス
-	m_nType		  = 0;							// 種類
-	m_pShadow	  = NULL;						// 影へのポインタ
+	m_pos = INIT_VEC3;					// 位置
+	m_rot = INIT_VEC3;					// 向き
+	m_size = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+	m_pMesh = NULL;						// メッシュへのポインタ
+	m_pBuffMat = NULL;						// マテリアルへのポインタ
+	m_dwNumMat = NULL;						// マテリアル数
+	m_mtxWorld = {};							// ワールドマトリックス
+	m_nType = 0;							// 種類
+	m_pShadow = NULL;						// 影へのポインタ
 
 	for (int nCnt = 0; nCnt < MAX_PATH; nCnt++)
 	{
@@ -39,7 +40,7 @@ CObjectX::~CObjectX()
 //=======================================
 // 生成処理
 //=======================================
-CObjectX* CObjectX::Create(const char* pFilepath,D3DXVECTOR3 pos,D3DXVECTOR3 rot)
+CObjectX* CObjectX::Create(const char* pFilepath, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 size)
 {
 	CObjectX* pObjectX;
 
@@ -49,6 +50,7 @@ CObjectX* CObjectX::Create(const char* pFilepath,D3DXVECTOR3 pos,D3DXVECTOR3 rot
 
 		pObjectX->m_pos = pos;
 		pObjectX->m_rot = D3DXToRadian(rot);
+		pObjectX->m_size = size;
 		pObjectX->SetPath(pFilepath);	// パス保存
 
 		// 初期化処理
@@ -140,8 +142,8 @@ HRESULT CObjectX::Init(void)
 		}
 	}
 
-	// 影の生成
-	m_pShadow = CShadow::Create(m_pos, 200, 55.0f, 0.1f, 55.0f);
+	//// 影の生成
+	//m_pShadow = CShadow::Create(m_pos, 200, 55.0f, 0.1f, 55.0f);
 
 	return S_OK;
 }
@@ -201,7 +203,7 @@ void CObjectX::Draw(void)
 	LPDIRECT3DDEVICE9 pDevice = renderer->GetDevice();
 
 	// 計算用マトリックス
-	D3DXMATRIX mtxRot, mtxTrans;
+	D3DXMATRIX mtxRot, mtxTrans, mtxSize;
 
 	D3DMATERIAL9 matDef;	// 現在のマテリアル保存用
 
@@ -209,6 +211,10 @@ void CObjectX::Draw(void)
 
 	// ワールドマトリックスの初期化
 	D3DXMatrixIdentity(&m_mtxWorld);
+
+	// サイズを反映
+	D3DXMatrixScaling(&mtxSize, m_size.x, m_size.y, m_size.z);
+	D3DXMatrixMultiply(&m_mtxWorld, &m_mtxWorld, &mtxSize);
 
 	// 向きを反映
 	D3DXMatrixRotationYawPitchRoll(&mtxRot, m_rot.y, m_rot.x, m_rot.z);
@@ -263,4 +269,25 @@ D3DXVECTOR3 CObjectX::GetPos(void)
 void CObjectX::SetPath(const char* path)
 {
 	strcpy_s(m_szPath, path);
+}
+//=======================================
+// サイズの設定処理
+//=======================================
+void CObjectX::SetSize(D3DXVECTOR3 size)
+{
+	m_size = size;
+}
+//=======================================
+// 位置の設定処理
+//=======================================
+void CObjectX::SetPos(D3DXVECTOR3 pos)
+{
+	m_pos = pos;
+}
+//=======================================
+// 向きの設定処理
+//=======================================
+void CObjectX::SetRot(D3DXVECTOR3 rot)
+{
+	m_rot = rot;
 }
