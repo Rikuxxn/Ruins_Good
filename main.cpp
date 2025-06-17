@@ -12,6 +12,10 @@
 #include <crtdbg.h>
 #include "manager.h"
 
+// プロトタイプ宣言
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+void ToggleFullScreen(HWND hWnd);// ウィンドウをフルスクリーン
+
 //=======================================
 // メイン関数
 //=======================================
@@ -98,6 +102,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 	dwFrameCount = 0;
 	dwFPSLastTime = timeGetTime();
 
+	// レンダラーの取得
+	CRenderer* pRenderer = CManager::GetRenderer();
+
 	//メッセージループ
 	while (1)
 	{
@@ -141,9 +148,20 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 
 				dwFrameCount++;// フレームカウントを加算
 
+				if (pRenderer->NeedsReset())
+				{
+					// デバイスのリセット
+					pRenderer->ResetDevice();
+				}
+
+				// フレーム開始
+				NewFlameImgui();
 
 				// マネージャーの更新処理
 				pManager->Update();
+
+				// フレーム終了
+				ImGui::EndFrame();
 
 				//マネージャーの描画処理
 				pManager->Draw();
@@ -169,15 +187,26 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 
 	return (int)msg.wParam;
 }
+
+// Forward declare message handler from imgui_impl_win32.cpp
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 //=============================================
 // ウィンドウプロシージャ
 //=============================================
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	//HDC hDC;//デバイスコンテキスト(GDIオブジェクト)のハンドル
+
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam))
+		return true;
 
 	const RECT rect = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
 
 	int nID;
+
+	// レンダラーの取得
+	CRenderer* pRenderer = CManager::GetRenderer();
 
 	switch (uMsg)
 	{
@@ -186,6 +215,17 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 
 		break;
+	case WM_SIZE:
+
+		if (wParam == SIZE_MINIMIZED)
+		{
+			return 0;
+		}
+
+		pRenderer->OnResize(LOWORD(lParam), HIWORD(lParam));
+
+		return 0;
+
 	case WM_KEYDOWN://キー押下のメッセージ
 		switch (wParam)
 		{
@@ -207,10 +247,45 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case VK_F11:
 
 			// フルスクリーン
+			ToggleFullScreen(hWnd);
 
 			break;
 		}
 		break;
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);//既定の処理を繰り返す
+}
+//************************************************
+// ウィンドウをフルスクリーンに変える処理
+//************************************************
+void ToggleFullScreen(HWND hWnd)
+{
+	static bool isFullscreen = true;
+
+	// 現在のウィンドウスタイルを取得
+	DWORD dwStyle = GetWindowLong(hWnd, GWL_STYLE);
+
+	// ウィンドウを切り替えるための変数
+	RECT windowRect = {};
+
+	if (isFullscreen)
+	{
+		// ウィンドウモードに切り替え
+		SetWindowLong(hWnd, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+		SetWindowPos(hWnd, HWND_TOP, windowRect.left, windowRect.top,
+			windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
+			SWP_FRAMECHANGED | SWP_NOACTIVATE);
+		ShowWindow(hWnd, SW_NORMAL);
+	}
+	else
+	{
+		// フルスクリーンモードに切り替え
+		GetWindowRect(hWnd, &windowRect);
+		SetWindowLong(hWnd, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
+		SetWindowPos(hWnd, HWND_TOP, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN),
+			SWP_FRAMECHANGED | SWP_NOACTIVATE);
+		ShowWindow(hWnd, SW_MAXIMIZE);
+	}
+
+	isFullscreen = !isFullscreen;
 }

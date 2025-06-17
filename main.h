@@ -7,9 +7,11 @@
 #ifndef _MAIN_H_// このマクロ定義がされていなかったら
 #define _MAIN_H_// 2重インクルード防止のマクロ定義
 
-// プロトタイプ宣言
-LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-//void ToggleFullscreen(HWND hWnd);// ウィンドウをフルスクリーン
-//bool GetFullScreen(void);
+#include "imgui.h"
+#include "imgui_impl_dx9.h"
+#include "imgui_impl_win32.h"
+#include <tchar.h>
+#include <stdio.h>
+#include "imguimaneger.h"
 
 #endif

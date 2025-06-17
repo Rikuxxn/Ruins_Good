@@ -77,6 +77,22 @@ void CBlock::Update(void)
 	CObjectX::Update();
 }
 //=======================================
+// 情報の更新処理
+//=======================================
+void CBlock::UpdateInfo(void)
+{
+	// 場所
+	SetPosImgui(ImVec2(0.0f, 0.0f));
+
+	// サイズ
+	SetSizeImgui(ImVec2(180.0f, 200.0f));
+
+	StartImgui(u8"BlockInfo", IMGUITYPE_DEFOULT);
+
+	ImGui::Text("Editor Mode Active");
+	ImGui::End();
+}
+//=======================================
 // 描画処理
 //=======================================
 void CBlock::Draw(void)

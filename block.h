@@ -21,6 +21,7 @@ public:
 	HRESULT Init(void);
 	void Uninit(void);
 	void Update(void);
+	static void UpdateInfo(void);
 	void Draw(void);
 
 private:

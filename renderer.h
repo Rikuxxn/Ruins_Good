@@ -22,11 +22,20 @@ public:
 	void Uninit(void);
 	void Update(void);
 	void Draw(int fps);
+	void ResetDevice(void);
+	void OnResize(UINT width, UINT height);
+	bool NeedsReset(void) const;
 	LPDIRECT3DDEVICE9 GetDevice(void) { return m_pD3DDevice; };
 	static CDebugProc* GetDebug(void);
 private:
 	LPDIRECT3D9 m_pD3D;						// DirectX3Dオブジェクトへのポインタ
 	LPDIRECT3DDEVICE9 m_pD3DDevice;			// デバイスへのポインタ
 	static CDebugProc* m_pDebug;			// デバッグフォントへのポインタ
+
+	UINT m_ResizeWidth;
+	UINT m_ResizeHeight;
+	D3DPRESENT_PARAMETERS m_d3dpp;
+	HWND m_hWnd;
+
 };
 #endif

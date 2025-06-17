@@ -143,8 +143,8 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd)
 	//// ビルボードの生成
 	//CObjectBillboard::Create(CObjectBillboard::TYPE_ONE, D3DXVECTOR3(0.0f, 20.0f, -350.0f), 120.0f, 60.0f);
 
-	// スコアの生成
-	m_pScore = CScore::Create(920.0f, 10.0f, 42.0f, 58.0f);
+	//// スコアの生成
+	//m_pScore = CScore::Create(920.0f, 10.0f, 42.0f, 58.0f);
 
 	// タイムの生成
 	m_pTime = CTime::Create(12, 15, 600.0f, 10.0f, 42.0f, 58.0f);
@@ -341,6 +341,9 @@ void CManager::Update(void)
 
 	// ライトの更新
 	m_pLight->Update();
+
+	// ブロック情報の更新
+	m_pBlock->UpdateInfo();
 
 	// レンダラーの更新
 	m_pRenderer->Update();

@@ -23,7 +23,7 @@ CCamera::CCamera()
 	m_mtxView = {};									// ビューマトリックス
 	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);			// 向き
 	m_fDistance = 0.0f;								// 視点から注視点の距離
-	m_Mode = MODE_GAME;								// カメラのモード
+	m_Mode = MODE_EDIT;								// カメラのモード
 }
 //=======================================
 // デストラクタ
