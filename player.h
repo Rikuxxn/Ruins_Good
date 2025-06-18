@@ -7,16 +7,26 @@
 #ifndef _PLAYER_H_// このマクロ定義がされていなかったら
 #define _PLAYER_H_// 2重インクルード防止のマクロ定義
 
+//*****************************************************************************
+// インクルードファイル
+//*****************************************************************************
 #include "main.h"
 #include "object.h"
 #include "model.h"
 #include "shadow.h"
 #include "motion.h"
+#include "imguimaneger.h"
 
-#define MAX_PARTS (32)		// 最大パーツ数
-#define PLAYER_SPEED (0.90f)// 移動スピード
+//*****************************************************************************
+// マクロ定義
+//*****************************************************************************
+#define MAX_PARTS		(32)		// 最大パーツ数
+#define PLAYER_SPEED	(0.90f)		// 移動スピード
 
+
+//*****************************************************************************
 // プレイヤークラス
+//*****************************************************************************
 class CPlayer : public CObject
 {
 public:
@@ -27,6 +37,7 @@ public:
 	HRESULT Init(void);
 	void Uninit(void);
 	void Update(void);
+	void UpdateInfo(void);
 	void Draw(void);
 	D3DXVECTOR3 GetPos(void);
 	D3DXVECTOR3 GetRot(void);
@@ -37,6 +48,7 @@ private:
 	D3DXVECTOR3 m_rot;					// 向き
 	D3DXVECTOR3 m_rotDest;				// 向き
 	D3DXVECTOR3 m_move;					// 移動量
+	D3DXVECTOR3 m_size;					// サイズ
 	D3DXMATRIX m_mtxWorld;				// ワールドマトリックス
 	CModel* m_apModel[MAX_PARTS];		// モデル(パーツ)へのポインタ
 	int m_nNumModel;					// モデル(パーツ)の総数

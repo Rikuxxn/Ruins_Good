@@ -4,17 +4,23 @@
 // Author : TANEKAWA RIKU
 //
 //=============================================================================
+
+//*****************************************************************************
+// インクルードファイル
+//*****************************************************************************
 #include "renderer.h"
 #include "object.h"
 #include "object2D.h"
 #include "manager.h"
 
+//*****************************************************************************
 // 静的メンバ変数宣言
+//*****************************************************************************
 CDebugProc* CRenderer::m_pDebug = NULL;
 
-//=======================================
+//=============================================================================
 // コンストラクタ
-//=======================================
+//=============================================================================
 CRenderer::CRenderer()
 {
 	// 値のクリア
@@ -23,22 +29,22 @@ CRenderer::CRenderer()
 	m_ResizeWidth = 0;
 	m_ResizeHeight = 0;
 	m_d3dpp = {};
+	m_bgCol = INIT_XCOL;
 }
-//=======================================
+//=============================================================================
 // デストラクタ
-//=======================================
+//=============================================================================
 CRenderer::~CRenderer()
 {
 	// 今はなし
 
 }
-//=======================================
+//=============================================================================
 // 初期化処理
-//=======================================
+//=============================================================================
 HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 {
 	D3DDISPLAYMODE d3ddm;			// ディスプレイモード
-	//D3DPRESENT_PARAMETERS d3dpp;	// プレゼンテーションパラメータ
 
 	// DirectX3Dオブジェクトの生成
 	m_pD3D = Direct3DCreate9(D3D_SDK_VERSION);
@@ -118,13 +124,13 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	m_pDebug->Init();
 
 	// 初期化処理
-	InitImgui(hWnd, m_pD3DDevice);
+	CImGuiManager::InitImgui(hWnd, m_pD3DDevice);
 
 	return S_OK;
 }
-//=======================================
+//=============================================================================
 // 終了処理
-//=======================================
+//=============================================================================
 void CRenderer::Uninit(void)
 {
 	// デバッグフォントの終了処理
@@ -145,27 +151,65 @@ void CRenderer::Uninit(void)
 	}
 
 	// ImGuiの終了処理
-	ImGui_ImplDX9_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	CImGuiManager::UninitImgui();
 }
-//=======================================
+//=============================================================================
 // 更新処理
-//=======================================
+//=============================================================================
 void CRenderer::Update(void)
 {
 	// すべてのオブジェクトの更新処理
 	CObject::UpdateAll();
+
+//#ifdef _DEBUG
+
+	CPlayer* pPlayer = CManager::GetPlayer();	// プレイヤーの取得
+	CCamera* pCamera = CManager::GetCamera();	// カメラの取得
+
+	// 場所
+	CImGuiManager::SetPosImgui(ImVec2(20.0f, 20.0f));
+
+	// サイズ
+	CImGuiManager::SetSizeImgui(ImVec2(420.0f, 500.0f));
+
+	CImGuiManager::StartImgui(u8"DebugInfo", CImGuiManager::IMGUITYPE_DEFOULT);
+
+	// FPS値の取得
+	int fps = GetFPS();
+
+	// FPS値
+	ImGui::Text("FPS : %d", fps);
+
+	ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
+
+	ImGui::Text("BG Color:");
+
+	ImGui::ColorEdit4("col", m_bgCol);
+
+	ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
+
+	// プレイヤー情報の更新処理
+	pPlayer->UpdateInfo();
+
+	ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
+
+	// カメラ情報の更新処理
+	pCamera->UpdateInfo();
+
+	ImGui::End();
+
+//#endif
+
 }
-//=======================================
+//=============================================================================
 // 描画処理
-//=======================================
+//=============================================================================
 void CRenderer::Draw(int fps)
 {
 	// 画面クリア
 	m_pD3DDevice->Clear(0, NULL,
 		(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER),
-		D3DCOLOR_RGBA(0, 0, 0, 255), 1.0f, 0);
+		m_bgCol, 1.0f, 0);
 
 	// 描画開始
 	if (SUCCEEDED(m_pD3DDevice->BeginScene()))
@@ -174,34 +218,37 @@ void CRenderer::Draw(int fps)
 		// すべてのオブジェクトの描画処理
 		CObject::DrawAll();
 
+		// FPSのセット
+		SetFPS(fps);
+
 //#ifdef _DEBUG
 
-		CPlayer* pPlayer = CManager::GetPlayer();	// プレイヤーの取得
-		CCamera* pCamera = CManager::GetCamera();	// カメラの取得
+		//CPlayer* pPlayer = CManager::GetPlayer();	// プレイヤーの取得
+		//CCamera* pCamera = CManager::GetCamera();	// カメラの取得
 
-		// FPS値のデバッグ表示
-		m_pDebug->Print("FPS:%d", fps);
-		m_pDebug->Draw(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0, 0);
+		//// FPS値のデバッグ表示
+		//m_pDebug->Print("FPS:%d", fps);
+		//m_pDebug->Draw(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0, 0);
 
-		if (pPlayer && pPlayer->GetPlayerUse() == true)
-		{
-			D3DXVECTOR3 Pos = pPlayer->GetPos();
+		//if (pPlayer && pPlayer->GetPlayerUse() == true)
+		//{
+		//	D3DXVECTOR3 Pos = pPlayer->GetPos();
 
-			m_pDebug->Print("プレイヤーの位置 : (X %.1f,Y %.1f,Z %.1f)", Pos.x, Pos.y, Pos.z);
-			m_pDebug->Draw(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0, 20);
-		}
-		else
-		{
-			m_pDebug->Print("プレイヤーなし（死亡 or 未生成）");
-			m_pDebug->Draw(D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 0, 20);
-		}
+		//	m_pDebug->Print("プレイヤーの位置 : (X %.1f,Y %.1f,Z %.1f)", Pos.x, Pos.y, Pos.z);
+		//	m_pDebug->Draw(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0, 20);
+		//}
+		//else
+		//{
+		//	m_pDebug->Print("プレイヤーなし（死亡 or 未生成）");
+		//	m_pDebug->Draw(D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 0, 20);
+		//}
 
-		// カメラの角度の取得
-		D3DXVECTOR3 rot = pCamera->GetRot();
+		//// カメラの角度の取得
+		//D3DXVECTOR3 rot = pCamera->GetRot();
 
-		// カメラのデバッグ表示
-		m_pDebug->Print("カメラの角度 : (X:%.2f Y:%.2f)", rot.x,rot.y);
-		m_pDebug->Draw(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0, 60);
+		//// カメラのデバッグ表示
+		//m_pDebug->Print("カメラの角度 : (X:%.2f Y:%.2f)", rot.x,rot.y);
+		//m_pDebug->Draw(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0, 60);
 
 		// GUI表示
 		ImGui::Render();
@@ -215,9 +262,9 @@ void CRenderer::Draw(int fps)
 	// バックバッファとフロントバッファの入れ替え
 	m_pD3DDevice->Present(NULL, NULL, NULL, NULL);
 }
-//=======================================
+//=============================================================================
 // デバイスのリセット
-//=======================================
+//=============================================================================
 void CRenderer::ResetDevice(void)
 {
 	if (!m_pD3DDevice || m_ResizeWidth == 0 || m_ResizeHeight == 0)
@@ -279,25 +326,32 @@ void CRenderer::ResetDevice(void)
 	CLight::AddLight(D3DLIGHT_DIRECTIONAL, D3DXCOLOR(0.7f, 0.7f, 0.7f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 	CLight::AddLight(D3DLIGHT_DIRECTIONAL, D3DXCOLOR(0.7f, 0.7f, 0.7f, 1.0f), D3DXVECTOR3(0.0f, 0.0f, -1.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 }
-//=======================================
+//=============================================================================
 // サイズの再設定
-//=======================================
+//=============================================================================
 void CRenderer::OnResize(UINT width, UINT height)
 {
 	m_ResizeWidth = width;
 	m_ResizeHeight = height;
 }
-//=======================================
+//=============================================================================
 // デバイスのリセットが必要かどうか
-//=======================================
+//=============================================================================
 bool CRenderer::NeedsReset() const
 {
 	return (m_ResizeWidth != 0 && m_ResizeHeight != 0);
 }
-//=======================================
+//=============================================================================
 // デバッグ取得
-//=======================================
+//=============================================================================
 CDebugProc* CRenderer::GetDebug(void)
 {
 	return m_pDebug;
+}
+//=============================================================================
+// 画面背景のカラー
+//=============================================================================
+void CRenderer::SetBgCol(D3DXCOLOR col)
+{
+	m_bgCol = col;
 }

@@ -7,13 +7,23 @@
 #ifndef _OBJECT2D_H_// このマクロ定義がされていなかったら
 #define _OBJECT2D_H_// 2重インクルード防止のマクロ定義
 
+//*****************************************************************************
+// インクルードファイル
+//*****************************************************************************
 #include "main.h"
 #include "object.h"
 
+
+//*****************************************************************************
+// マクロ定義
+//*****************************************************************************
 #define OBJECT_WIDTH (55)
 #define OBJECT_HEIGHT (35)
 
+
+//*****************************************************************************
 // 2Dオブジェクトクラス
+//*****************************************************************************
 class CObject2D : public CObject
 {
 public:
@@ -38,6 +48,7 @@ public:
 	void TextureAnimExp(int nTexPosX,int nTexPosY, int nAnimSpeed);
 	void TextureAnim(int nTexPosX, int nTexPosY, int nAnimSpeed);
 	void ScrollTexture(void);
+
 private:
 	LPDIRECT3DVERTEXBUFFER9 m_pVtxBuff;		// 頂点バッファへのポインタ
 	D3DXVECTOR3 m_pos;						// 位置
@@ -45,7 +56,7 @@ private:
 	D3DXVECTOR3 m_move;						// 移動量
 	D3DCOLOR m_col;							// 色
 	float m_fTexU;							// テクスチャUV
-	float m_fTexV;								// テクスチャUV
+	float m_fTexV;							// テクスチャUV
 	int m_nCounterAnim;						// アニメーションカウンター
 	int m_nPatternAnim;						// アニメーションパターンNo.
 	float m_fWidth;							// 幅

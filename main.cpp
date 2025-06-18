@@ -4,6 +4,10 @@
 // Author : TANEKAWA RIKU
 //
 //=============================================================================
+
+//*****************************************************************************
+// インクルードファイル
+//*****************************************************************************
 #include "main.h"
 #include "renderer.h"
 #include "object.h"
@@ -11,14 +15,18 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 #include "manager.h"
+#include <tchar.h>
+#include <stdio.h>
 
+//*****************************************************************************
 // プロトタイプ宣言
+//*****************************************************************************
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void ToggleFullScreen(HWND hWnd);// ウィンドウをフルスクリーン
 
-//=======================================
+//=============================================================================
 // メイン関数
-//=======================================
+//=============================================================================
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
 	// メモリリーク検知
@@ -155,7 +163,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 				}
 
 				// フレーム開始
-				NewFlameImgui();
+				CImGuiManager::NewFlameImgui();
 
 				// マネージャーの更新処理
 				pManager->Update();
@@ -191,9 +199,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-//=============================================
+//=============================================================================
 // ウィンドウプロシージャ
-//=============================================
+//=============================================================================
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	//HDC hDC;//デバイスコンテキスト(GDIオブジェクト)のハンドル
@@ -255,9 +263,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);//既定の処理を繰り返す
 }
-//************************************************
-// ウィンドウをフルスクリーンに変える処理
-//************************************************
+//=============================================================================
+// ウィンドウフルスクリーン処理
+//=============================================================================
 void ToggleFullScreen(HWND hWnd)
 {
 	static bool isFullscreen = true;

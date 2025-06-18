@@ -9,13 +9,28 @@
 //インクルードファイル
 //*************************************************************
 #include "imguimaneger.h"
-//#include "player.h"
 #include "imgui_internal.h"
 
+
+//=============================================================
+// コンストラクタ
+//=============================================================
+CImGuiManager::CImGuiManager()
+{
+	// 値のクリア
+
+}
+//=============================================================
+// デストラクタ
+//=============================================================
+CImGuiManager::~CImGuiManager()
+{
+	// なし
+}
 //=============================================================
 // ImGuiの初期化処理
 //=============================================================
-void InitImgui(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
+void CImGuiManager::InitImgui(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 {
 
 	// Setup Dear ImGui context
@@ -30,7 +45,7 @@ void InitImgui(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	// ImGui::StyleColorsLight(); // 他のスタイルも選べます
 
 	// フォント設定（デフォルトのフォントとして Consolas を使用）
-	ImFont* myFont = io.Fonts->AddFontFromFileTTF("C:/Windows/Fonts/meiryo.ttc", 16.0f,NULL,io.Fonts->GetGlyphRangesJapanese());
+	ImFont* myFont = io.Fonts->AddFontFromFileTTF("C:/Windows/Fonts/meiryo.ttc", 23.0f,NULL,io.Fonts->GetGlyphRangesJapanese());
 
 	// Setup Platform/Renderer backends
 	ImGui_ImplWin32_Init(hWnd);
@@ -40,34 +55,31 @@ void InitImgui(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 //=============================================================
 // ImGuiの終了処理
 //=============================================================
-void UninitImgui()
+void CImGuiManager::UninitImgui()
 {
 	// Cleanup
 	ImGui_ImplDX9_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 }
-
 //=============================================================
 // ImGuiのウィンドウの位置を設定
 //=============================================================
-void SetPosImgui(ImVec2 Pos)
+void CImGuiManager::SetPosImgui(ImVec2 Pos)
 {
 	ImGui::SetNextWindowPos(Pos, ImGuiCond_Once);
 }
-
 //=============================================================
 // ImGuiのウィンドウの大きさを設定
 //=============================================================
-void SetSizeImgui(ImVec2 Size)
+void CImGuiManager::SetSizeImgui(ImVec2 Size)
 {
 	ImGui::SetNextWindowSize(Size, ImGuiCond_Once);
 }
-
 //=============================================================
 // ImGuiのウィンドウの描画開始
 //=============================================================
-void StartImgui(const char* ImguiName, IMGUITYPE nType)
+void CImGuiManager::StartImgui(const char* ImguiName, IMGUITYPE nType)
 {
 	if (ImguiName != NULL)
 	{
@@ -90,41 +102,29 @@ void StartImgui(const char* ImguiName, IMGUITYPE nType)
 		}
 	}
 }
-
 //=============================================================
 // ImGuiのウィンドウの描画を終了
 //=============================================================
-void EndImgui()
+void CImGuiManager::EndImgui()
 {
 	ImGui::End();
 }
-
 //=============================================================
 // ImGuiのウィンドウのフレームを設定
 //=============================================================
-void NewFlameImgui()
+void CImGuiManager::NewFlameImgui()
 {
 	// Start the Dear ImGui frame
 	ImGui_ImplDX9_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 }
-
-//=============================================================
-// プレイヤーのモデルの回転の設定
-//=============================================================
-void SetRotation()
-{
-
-}
 //=============================================================
 // ImGuiのウィンドウのレンダーを設定
 //=============================================================
-void EndImguiRender()
+void CImGuiManager::EndImguiRender()
 {
 	ImGui::EndFrame();
 	ImGui::Render();
 	ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 }
-
-

@@ -7,8 +7,15 @@
 #ifndef _CAMERA_H_// このマクロ定義がされていなかったら
 #define _CAMERA_H_// 2重インクルード防止のマクロ定義
 
+//*****************************************************************************
+// インクルードファイル
+//*****************************************************************************
 #include "main.h"
 
+
+//*****************************************************************************
+// カメラクラス
+//*****************************************************************************
 class CCamera
 {
 public:
@@ -26,6 +33,7 @@ public:
 	HRESULT Init(void);
 	void Uninit(void);
 	void Update(void);
+	void UpdateInfo(void);
 	void SetCamera(void);
 	void EditCamera(void);
 	void GameCamera(void);
@@ -43,6 +51,7 @@ private:
 	D3DXVECTOR3 m_rot;			// 向き
 	float m_fDistance;			// 視点から注視点の距離
 	MODE m_Mode;				// カメラのモード
+	bool m_bCheck;				// チェックされたかどうか(GUI)
 };
 
 #endif

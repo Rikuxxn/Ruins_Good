@@ -7,6 +7,9 @@
 #ifndef _MANAGER_H_// このマクロ定義がされていなかったら
 #define _MANAGER_H_// 2重インクルード防止のマクロ定義
 
+//*****************************************************************************
+// インクルードファイル
+//*****************************************************************************
 #include "main.h"
 #include "renderer.h"
 #include "object2D.h"
@@ -22,8 +25,12 @@
 #include "light.h"
 #include "motion.h"
 #include "block.h"
+#include "blockmanager.h"
 
+
+//*****************************************************************************
 // マネージャークラス
+//*****************************************************************************
 class CManager
 {
 public:
@@ -34,6 +41,7 @@ public:
 	void Uninit(void);
 	void Update(void);
 	void Draw(void);
+
 	static CRenderer* GetRenderer(void);
 	static CObject2D* GetObject2D(void);
 	static CInputKeyboard* GetInputKeyboard(void);
@@ -51,9 +59,12 @@ public:
 	static CLight* GetLight(void);
 	static CModel* GetModel(void);
 	static CMotion* GetMotion(void);
+	static CObjectX* GetObjectX(void);
 	static CBlock* GetBlock(void);
+	static CBlockManager* GetBlockManager(void);
 
 	int GetFPS(int fps) { return m_fps = fps; };
+	int GetFPSCnt(void) { return m_fps; }
 	static bool GetisPaused(void);
 
 private:
@@ -75,6 +86,9 @@ private:
 	static CModel* m_pModel;					// モデルへのポインタ
 	static CMotion* m_pMotion;					// モーションへのポインタ
 	static CBlock* m_pBlock;					// ブロックへのポインタ
+	static CObjectX* m_pObjectX;				// Xファイルオブジェクトへのポインタ
+	static CBlockManager* m_pBlockManager;		// ブロックマネージャーへのポインタ
+	static std::vector<CBlock*> m_blocks;  // 複数のブロックを保持
 
 	int m_fps;
 	static bool m_isPaused; // trueならポーズ中
