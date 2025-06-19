@@ -36,8 +36,14 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 
 	CManager* pManager = NULL;
 
+	CImGuiManager* pImGuiManager = NULL;
+
 	// マネージャーの生成
 	pManager = new CManager;
+
+	// ImGuiの生成
+	pImGuiManager = new CImGuiManager;
+
 
 	pManager->GetFPS(nCountFPS);
 
@@ -163,7 +169,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 				}
 
 				// フレーム開始
-				CImGuiManager::NewFlameImgui();
+				pImGuiManager->NewFlameImgui();
 
 				// マネージャーの更新処理
 				pManager->Update();
@@ -186,6 +192,17 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hInstancePrev, _
 		delete pManager;
 		pManager = NULL;
 	}
+
+	// ImGuiマネージャーの破棄
+	if (pImGuiManager != NULL)
+	{
+		// ImGuiマネージャーの終了処理
+		pImGuiManager->Uninit();
+
+		delete pImGuiManager;
+		pImGuiManager = NULL;
+	}
+
 
 	// 分解能を戻す
 	timeEndPeriod(1);

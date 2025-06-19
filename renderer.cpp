@@ -123,8 +123,11 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	// デバッグフォントの初期化
 	m_pDebug->Init();
 
+	// ImGuiマネージャーの取得
+	CImGuiManager* pImGuiManager = CManager::GetImGuiManager();
+
 	// 初期化処理
-	CImGuiManager::InitImgui(hWnd, m_pD3DDevice);
+	pImGuiManager->Init(hWnd, m_pD3DDevice);
 
 	return S_OK;
 }
@@ -149,9 +152,6 @@ void CRenderer::Uninit(void)
 		m_pD3D->Release();
 		m_pD3D = NULL;
 	}
-
-	// ImGuiの終了処理
-	CImGuiManager::UninitImgui();
 }
 //=============================================================================
 // 更新処理
@@ -161,18 +161,21 @@ void CRenderer::Update(void)
 	// すべてのオブジェクトの更新処理
 	CObject::UpdateAll();
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
+
+	// ImGuiマネージャーの取得
+	CImGuiManager* pImGuiManager = CManager::GetImGuiManager();
 
 	CPlayer* pPlayer = CManager::GetPlayer();	// プレイヤーの取得
 	CCamera* pCamera = CManager::GetCamera();	// カメラの取得
 
 	// 場所
-	CImGuiManager::SetPosImgui(ImVec2(20.0f, 20.0f));
+	pImGuiManager->SetPosImgui(ImVec2(20.0f, 20.0f));
 
 	// サイズ
-	CImGuiManager::SetSizeImgui(ImVec2(420.0f, 500.0f));
+	pImGuiManager->SetSizeImgui(ImVec2(420.0f, 500.0f));
 
-	CImGuiManager::StartImgui(u8"DebugInfo", CImGuiManager::IMGUITYPE_DEFOULT);
+	pImGuiManager->StartImgui(u8"DebugInfo", CImGuiManager::IMGUITYPE_DEFOULT);
 
 	// FPS値の取得
 	int fps = GetFPS();
@@ -198,7 +201,7 @@ void CRenderer::Update(void)
 
 	ImGui::End();
 
-//#endif
+#endif
 
 }
 //=============================================================================
@@ -221,7 +224,7 @@ void CRenderer::Draw(int fps)
 		// FPSのセット
 		SetFPS(fps);
 
-//#ifdef _DEBUG
+#ifdef _DEBUG
 
 		//CPlayer* pPlayer = CManager::GetPlayer();	// プレイヤーの取得
 		//CCamera* pCamera = CManager::GetCamera();	// カメラの取得
@@ -254,7 +257,7 @@ void CRenderer::Draw(int fps)
 		ImGui::Render();
 		ImGui_ImplDX9_RenderDrawData(ImGui::GetDrawData());
 
-//#endif
+#endif
 		// 描画終了
 		m_pD3DDevice->EndScene();
 	}

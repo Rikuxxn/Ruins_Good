@@ -62,6 +62,7 @@ public:
 	static CObjectX* GetObjectX(void);
 	static CBlock* GetBlock(void);
 	static CBlockManager* GetBlockManager(void);
+	static CImGuiManager* GetImGuiManager(void);
 
 	int GetFPS(int fps) { return m_fps = fps; };
 	int GetFPSCnt(void) { return m_fps; }
@@ -88,6 +89,8 @@ private:
 	static CBlock* m_pBlock;					// ブロックへのポインタ
 	static CObjectX* m_pObjectX;				// Xファイルオブジェクトへのポインタ
 	static CBlockManager* m_pBlockManager;		// ブロックマネージャーへのポインタ
+	static CImGuiManager* m_pImGuiManager;		// ImGuiマネージャーへのポインタ
+
 	static std::vector<CBlock*> m_blocks;  // 複数のブロックを保持
 
 	int m_fps;

@@ -21,7 +21,6 @@ CBlock::CBlock()
 	{
 		m_szPath[nCnt] = NULL;					// ファイルパス
 	}
-	m_move = INIT_VEC3;							// 移動量
 	m_col = INIT_XCOL;							// 色
 	m_baseCol = INIT_XCOL;						// ベースの色
 	m_bSelected = false;
@@ -45,7 +44,7 @@ CBlock* CBlock::Create(const char* pFilepath, D3DXVECTOR3 pos, D3DXVECTOR3 rot, 
 		pBlock = new CBlock;
 
 		pBlock->SetPos(pos);
-		pBlock->SetRot(D3DXToRadian(rot));
+		pBlock->SetRot(rot);
 		pBlock->SetSize(size);
 		pBlock->SetPath(pFilepath);	// パス保存
 

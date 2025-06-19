@@ -11,6 +11,7 @@
 #include "blockmanager.h"
 #include "json.hpp"
 #include "FileDialogUtils.h"
+#include "manager.h"
 
 using json = nlohmann::json;
 
@@ -20,13 +21,13 @@ using json = nlohmann::json;
 std::vector<CBlock*> CBlockManager::m_blocks;	// ブロックの情報
 int CBlockManager::m_selectedIdx = 0;			// 選択中のインデックス
 
-
 //=============================================================================
 // コンストラクタ
 //=============================================================================
 CBlockManager::CBlockManager()
 {
 	// 値のクリア
+	m_prevSelectedIdx = -1;
 }
 //=============================================================================
 // デストラクタ
@@ -61,6 +62,9 @@ void CBlockManager::UpdateInfo(void)
 		return;
 	}
 
+	// ImGuiマネージャーの取得
+	CImGuiManager* pImGuiManager = CManager::GetImGuiManager();
+
 	// GUIスタイルの取得
 	ImGuiStyle& style = ImGui::GetStyle();
 
@@ -70,13 +74,13 @@ void CBlockManager::UpdateInfo(void)
 	style.WindowRounding	= 10.0f;		// ウィンドウ全体の角
 
 	// 場所
-	CImGuiManager::SetPosImgui(ImVec2(1900.0f, 20.0f));
+	pImGuiManager->SetPosImgui(ImVec2(1900.0f, 20.0f));
 
 	// サイズ
-	CImGuiManager::SetSizeImgui(ImVec2(400.0f, 500.0f));
+	pImGuiManager->SetSizeImgui(ImVec2(400.0f, 500.0f));
 
 	// 最初のGUI
-	CImGuiManager::StartImgui(u8"BlockInfo", CImGuiManager::IMGUITYPE_DEFOULT);
+	pImGuiManager->StartImgui(u8"BlockInfo", CImGuiManager::IMGUITYPE_DEFOULT);
 
 	// 範囲外対策
 	if (m_selectedIdx >= (int)m_blocks.size())
@@ -106,7 +110,7 @@ void CBlockManager::UpdateInfo(void)
 		D3DXVECTOR3 size = selectedBlock->GetSize();// 選択中のブロックのサイズの取得
 
 		// ラジアン→角度に一時変換
-		D3DXVECTOR3 degRot = rot * (180.0f / D3DX_PI);
+		D3DXVECTOR3 degRot = D3DXToDegree(rot);
 
 		//*********************************************************************
 		// POS の調整
@@ -187,7 +191,7 @@ void CBlockManager::UpdateInfo(void)
 		ImGui::DragFloat("##Block_size_z", &size.z, 0.1f, -100.0f, 100.0f, "%.1f");
 
 		// 角度→ラジアンに戻す
-		rot = degRot * (D3DX_PI / 180.0f);
+		rot = D3DXToRadian(degRot);
 
 		// 位置の設定
 		selectedBlock->SetPos(pos);
@@ -204,9 +208,19 @@ void CBlockManager::UpdateInfo(void)
 
 	ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
 
+	if (ImGui::TreeNode("Block Types"))
+	{
+
+		ImGui::TreePop(); // 閉じる
+	}
+
+	ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
+
 	if (ImGui::Button("Save"))
 	{
+		// ダイアログを開いてファイルに保存
 		std::string path = OpenWindowsSaveFileDialog();
+
 		if (!path.empty())
 		{
 			// データの保存
@@ -218,7 +232,9 @@ void CBlockManager::UpdateInfo(void)
 
 	if (ImGui::Button("Load"))
 	{
+		// ダイアログを開いてファイルを開く
 		std::string path = OpenWindowsOpenFileDialog();
+
 		if (!path.empty())
 		{
 			// データの読み込み
@@ -254,15 +270,20 @@ void CBlockManager::SaveToJson(const char* filename)
 	// 1つづつJSON化
 	for (const auto& block : m_blocks)
 	{
+		// ラジアン→角度に一時変換
+		D3DXVECTOR3 degRot = D3DXToDegree(block->GetRot());
+		
 		json b;
-		b["filepath"] = block->GetPath(); // モデルパス
-		b["pos"] = { block->GetPos().x, block->GetPos().y, block->GetPos().z };
-		b["rot"] = { block->GetRot().x, block->GetRot().y, block->GetRot().z };
-		b["size"] = { block->GetSize().x, block->GetSize().y, block->GetSize().z };
+		b["filepath"] = block->GetPath();											// モデルパス
+		b["pos"] = { block->GetPos().x, block->GetPos().y, block->GetPos().z };		// 位置
+		b["rot"] = { degRot.x, degRot.y, degRot.z };								// 向き
+		b["size"] = { block->GetSize().x, block->GetSize().y, block->GetSize().z };	// サイズ
 
+		// 追加
 		j.push_back(b);
 	}
 
+	// 出力ファイルストリーム
 	std::ofstream file(filename);
 
 	if (file.is_open())
@@ -296,39 +317,46 @@ void CBlockManager::LoadFromJson(const char* filename)
 	{
 		if (block != NULL)
 		{
+			// ブロックの終了処理
 			block->Uninit();
 		}
 	}
+
+	// 動的配列を空にする (サイズを0にする)
 	m_blocks.clear();
 
 	// 新たに生成
 	for (const auto& b : j)
 	{
+
 		std::string path = b["filepath"];
 		D3DXVECTOR3 pos(b["pos"][0], b["pos"][1], b["pos"][2]);
-		D3DXVECTOR3 rot(b["rot"][0], b["rot"][1], b["rot"][2]);
+		D3DXVECTOR3 degRot(b["rot"][0], b["rot"][1], b["rot"][2]);
 		D3DXVECTOR3 size(b["size"][0], b["size"][1], b["size"][2]);
+
+		// 角度→ラジアンに戻す
+		D3DXVECTOR3 rot = D3DXToRadian(degRot);
 
 		// ブロックの生成
 		CreateBlock(path.c_str(), pos, rot, size);
 	}
 }
-//=============================================================================
-// ブロックの取得
-//=============================================================================
-CBlock* CBlockManager::GetBlock(int index)
-{
-	if (index >= 0 && index < (int)m_blocks.size())
-	{
-		return m_blocks[index];
-	}
-
-	return NULL;
-}
-//=============================================================================
-// ブロックのサイズ取得
-//=============================================================================
-int CBlockManager::GetBlockCount(void)
-{
-	return (int)m_blocks.size();
-}
+////=============================================================================
+//// ブロックの取得
+////=============================================================================
+//CBlock* CBlockManager::GetBlock(int index)
+//{
+//	if (index >= 0 && index < (int)m_blocks.size())
+//	{
+//		return m_blocks[index];
+//	}
+//
+//	return NULL;
+//}
+////=============================================================================
+//// ブロックのサイズ取得
+////=============================================================================
+//int CBlockManager::GetBlockCount(void)
+//{
+//	return (int)m_blocks.size();
+//}

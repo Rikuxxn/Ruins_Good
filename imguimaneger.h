@@ -33,14 +33,14 @@ public :
 		IMGUITYPE_MAX
 	}IMGUITYPE;
 
-	static void InitImgui(HWND hWnd, LPDIRECT3DDEVICE9 pDevice);
-	static void UninitImgui();
-	static void SetPosImgui(ImVec2 Pos);
-	static void SetSizeImgui(ImVec2 Size);
-	static void StartImgui(const char* ImguiName, IMGUITYPE nType);
-	static void EndImgui();
-	static void EndImguiRender();
-	static void NewFlameImgui();
+	void Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice);
+	void Uninit();
+	void SetPosImgui(ImVec2 Pos);
+	void SetSizeImgui(ImVec2 Size);
+	void StartImgui(const char* ImguiName, IMGUITYPE nType);
+	void EndImgui();
+	void EndImguiRender();
+	void NewFlameImgui();
 
 private:
 

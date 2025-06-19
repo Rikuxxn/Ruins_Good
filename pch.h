@@ -38,8 +38,8 @@
 #pragma comment(lib,"dinput8.lib")								// 入力処理に必要
 #pragma comment(lib,"xinput.lib")								// ジョイパッド処理に必要
 
-//// Bullet Physics
-//#include <btBulletDynamicsCommon.h>
+// Bullet Physics
+#include <btBulletDynamicsCommon.h>
 
 //*****************************************************************************
 // マクロ定義
@@ -58,8 +58,6 @@
 #define INIT_COL	(D3DCOLOR_RGBA (0,0,0,255))
 #define INIT_XCOL	(D3DXCOLOR (0.0f,0.0f,0.0f,1.0f))
 
-// 
-using namespace std;
 
 //*****************************************************************************
 // 画面の種類

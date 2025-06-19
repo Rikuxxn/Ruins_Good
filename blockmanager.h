@@ -10,9 +10,7 @@
 //*****************************************************************************
 // インクルードファイル
 //*****************************************************************************
-#include "main.h"
 #include "block.h"
-#include "imguimaneger.h"
 
 //*****************************************************************************
 // ブロックマネージャークラス
@@ -30,13 +28,13 @@ public:
     static CBlock* CreateBlock(const char* filepath, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 size);
     void SaveToJson(const char* filename);
     void LoadFromJson(const char* filename);
-    CBlock* GetBlock(int index);
-    int GetBlockCount(void);
+    //CBlock* GetBlock(int index);
+    //int GetBlockCount(void);
 
 private:
     static std::vector<CBlock*> m_blocks;   // ブロック情報
     static int m_selectedIdx;               // 選択中のインデックス
-    int m_prevSelectedIdx = -1;
+    int m_prevSelectedIdx;
 };
 
 #endif

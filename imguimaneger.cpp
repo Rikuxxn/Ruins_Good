@@ -30,7 +30,7 @@ CImGuiManager::~CImGuiManager()
 //=============================================================
 // ImGui‚Ì‰Šú‰»ˆ—
 //=============================================================
-void CImGuiManager::InitImgui(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
+void CImGuiManager::Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 {
 
 	// Setup Dear ImGui context
@@ -55,7 +55,7 @@ void CImGuiManager::InitImgui(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 //=============================================================
 // ImGui‚ÌI—¹ˆ—
 //=============================================================
-void CImGuiManager::UninitImgui()
+void CImGuiManager::Uninit()
 {
 	// Cleanup
 	ImGui_ImplDX9_Shutdown();

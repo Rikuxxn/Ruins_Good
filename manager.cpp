@@ -40,6 +40,8 @@ CMotion* CManager::m_pMotion = NULL;
 CObjectX* CManager::m_pObjectX = NULL;
 CBlockManager* CManager::m_pBlockManager = NULL;
 CBlock* CManager::m_pBlock = NULL;
+CImGuiManager* CManager::m_pImGuiManager = NULL;
+
 bool CManager::m_isPaused = false;
 
 //=============================================================================
@@ -147,10 +149,13 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd)
 	// プレイヤーの生成
 	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 6.0f, -300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
-	// ブロックの生成
-	m_pBlock = CBlockManager::CreateBlock("data/MODELS/test_block.x", D3DXVECTOR3(-300.0f, 110.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 1.0f, 3.0f));
-	m_pBlock = CBlockManager::CreateBlock("data/MODELS/test_block.x", D3DXVECTOR3(-100.0f, 110.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 1.0f, 3.0f));
-	m_pBlock = CBlockManager::CreateBlock("data/MODELS/woodbox_001.x", D3DXVECTOR3(200.0f, 18.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+	//// ブロックの生成
+	//m_pBlock = CBlockManager::CreateBlock("data/MODELS/test_block.x", D3DXVECTOR3(-300.0f, 110.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 1.0f, 3.0f));
+	//m_pBlock = CBlockManager::CreateBlock("data/MODELS/test_block.x", D3DXVECTOR3(-100.0f, 110.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(2.0f, 1.0f, 3.0f));
+	//m_pBlock = CBlockManager::CreateBlock("data/MODELS/woodbox_001.x", D3DXVECTOR3(200.0f, 18.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f));
+
+	// JSONの読み込み
+	m_pBlockManager->LoadFromJson("data/block_info.json");
 
 	//// ビルボードの生成
 	//CObjectBillboard::Create(CObjectBillboard::TYPE_ONE, D3DXVECTOR3(0.0f, 20.0f, -350.0f), 120.0f, 60.0f);
@@ -527,6 +532,13 @@ CBlock* CManager::GetBlock(void)
 CBlockManager* CManager::GetBlockManager(void)
 {
 	return m_pBlockManager;
+}
+//=============================================================================
+// ImGuiマネージャーの取得
+//=============================================================================
+CImGuiManager* CManager::GetImGuiManager(void)
+{
+	return m_pImGuiManager;
 }
 //=============================================================================
 // ポーズ中かどうかの取得
