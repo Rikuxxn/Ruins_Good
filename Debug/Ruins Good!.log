@@ -1,6 +1,4 @@
 ﻿  pch.cpp
-C:\Users\student\Desktop\RuinsGood\Ruins_Good\bullet3\src\LinearMath\btSerializer.h(464,1): warning C4127: 条件式が定数です。
-C:\Users\student\Desktop\RuinsGood\Ruins_Good\bullet3\src\BulletDynamics\ConstraintSolver\btConeTwistConstraint.h(216,1): warning C4127: 条件式が定数です。
   FileDialogUtils.cpp
   block.cpp
   blockmanager.cpp

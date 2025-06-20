@@ -45,7 +45,13 @@ private:
 		"data/TEXTURE/wall001.jpg",
 		"data/TEXTURE/selectBG.png",
 		"data/TEXTURE/shadow000.jpg",
-		"data/TEXTURE/eye.png"
+		"data/TEXTURE/eye.png",
+		"data/TEXTURE/rock.png",
+		"data/TEXTURE/woodbox.png",
+		"data/TEXTURE/Axe.png",
+		"data/TEXTURE/ikada.png",
+		"data/TEXTURE/wall.png",
+
 	};
 
 	LPDIRECT3DTEXTURE9 m_apTexture[MAX_TEXTURE];

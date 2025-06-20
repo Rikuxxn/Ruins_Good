@@ -17,6 +17,7 @@
 // 静的メンバ変数宣言
 //*****************************************************************************
 CDebugProc* CRenderer::m_pDebug = NULL;
+int CRenderer::m_nFPS = 0;
 
 //=============================================================================
 // コンストラクタ
@@ -175,6 +176,7 @@ void CRenderer::Update(void)
 	// サイズ
 	pImGuiManager->SetSizeImgui(ImVec2(420.0f, 500.0f));
 
+	// 最初のGui
 	pImGuiManager->StartImgui(u8"DebugInfo", CImGuiManager::IMGUITYPE_DEFOULT);
 
 	// FPS値の取得
@@ -225,33 +227,6 @@ void CRenderer::Draw(int fps)
 		SetFPS(fps);
 
 #ifdef _DEBUG
-
-		//CPlayer* pPlayer = CManager::GetPlayer();	// プレイヤーの取得
-		//CCamera* pCamera = CManager::GetCamera();	// カメラの取得
-
-		//// FPS値のデバッグ表示
-		//m_pDebug->Print("FPS:%d", fps);
-		//m_pDebug->Draw(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0, 0);
-
-		//if (pPlayer && pPlayer->GetPlayerUse() == true)
-		//{
-		//	D3DXVECTOR3 Pos = pPlayer->GetPos();
-
-		//	m_pDebug->Print("プレイヤーの位置 : (X %.1f,Y %.1f,Z %.1f)", Pos.x, Pos.y, Pos.z);
-		//	m_pDebug->Draw(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0, 20);
-		//}
-		//else
-		//{
-		//	m_pDebug->Print("プレイヤーなし（死亡 or 未生成）");
-		//	m_pDebug->Draw(D3DXCOLOR(1.0f, 0.5f, 0.0f, 1.0f), 0, 20);
-		//}
-
-		//// カメラの角度の取得
-		//D3DXVECTOR3 rot = pCamera->GetRot();
-
-		//// カメラのデバッグ表示
-		//m_pDebug->Print("カメラの角度 : (X:%.2f Y:%.2f)", rot.x,rot.y);
-		//m_pDebug->Draw(D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f), 0, 60);
 
 		// GUI表示
 		ImGui::Render();

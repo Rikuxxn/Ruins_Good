@@ -24,6 +24,7 @@ CBlock::CBlock()
 	m_col = INIT_XCOL;							// 色
 	m_baseCol = INIT_XCOL;						// ベースの色
 	m_bSelected = false;
+	m_nIdxTexture = 0;
 }
 //=============================================================================
 // デストラクタ
@@ -59,6 +60,53 @@ CBlock* CBlock::Create(const char* pFilepath, D3DXVECTOR3 pos, D3DXVECTOR3 rot, 
 	}
 }
 //=============================================================================
+// タイプでの生成処理
+//=============================================================================
+CBlock* CBlock::CreateFromType(TYPE type, D3DXVECTOR3 pos)
+{
+	const char* path = "";
+	D3DXVECTOR3 size = { 1.0f, 1.0f, 1.0f };
+	D3DXVECTOR3 rot = { 0.0f, 0.0f, 0.0f };
+
+	switch (type)
+	{
+	case TYPE_WOODBOX:
+		path = "data/MODELS/woodbox_001.x";
+		size = { 1.5f, 1.5f, 1.5f };
+		break;
+
+	case TYPE_WALL:
+		path = "data/MODELS/wall.x";
+		size = { 1.0f, 1.0f, 1.0f };
+		break;
+
+	case TYPE_AXE:
+		path = "data/MODELS/Axe_01.x";
+		size = { 2.0f, 2.0f, 2.0f };
+		break;
+
+	case TYPE_IKADA:
+		path = "data/MODELS/ikada.x";
+		size = { 1.0f, 1.0f, 1.0f };
+		break;
+
+	case TYPE_ROCK:
+		path = "data/MODELS/Rock_001.x";
+		size = { 1.0f, 1.0f, 1.0f };
+		break;
+
+	default:
+		return NULL;
+	}
+
+	CBlock* block = CBlock::Create(path, pos, rot, size);
+	if (block)
+	{
+		block->SetType(type);
+	}
+	return block;
+}
+//=============================================================================
 // 初期化処理
 //=============================================================================
 HRESULT CBlock::Init(void)
@@ -69,6 +117,10 @@ HRESULT CBlock::Init(void)
 	// マテリアル色をブロックの色に設定
 	m_col = GetMaterialColor();
 	m_col = m_baseCol;              // 現在の色にも一度入れておく
+
+	// テクスチャ割り当て
+	CTexture* pTexture = CManager::GetTexture();
+	m_nIdxTexture = pTexture->Register(GetTexPathFromType(m_Type));
 
 	return S_OK;
 }
@@ -109,5 +161,27 @@ D3DXCOLOR CBlock::GetCol(void) const
 	else
 	{
 		return D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f); // 無補正
+	}
+}
+//=============================================================================
+// 画像表示用テクスチャパスの取得
+//=============================================================================
+const char* CBlock::GetTexPathFromType(TYPE type)
+{
+	switch (type)
+	{
+	case TYPE_WOODBOX: 
+		return "data/TEXTURE/woodbox.png";
+	case TYPE_WALL: 
+		return "data/TEXTURE/wall.png";
+	case TYPE_AXE: 
+		return "data/TEXTURE/Axe.png";
+	case TYPE_IKADA: 
+		return "data/TEXTURE/ikada.png";
+	case TYPE_ROCK:
+		return "data/TEXTURE/rock.png";
+
+	default: 
+		return "";
 	}
 }

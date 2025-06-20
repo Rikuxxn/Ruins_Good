@@ -32,7 +32,7 @@ public:
 	LPDIRECT3DDEVICE9 GetDevice(void) { return m_pD3DDevice; };
 	static CDebugProc* GetDebug(void);
 	void SetFPS(int fps) { m_nFPS = fps; }
-	int GetFPS(void) { return m_nFPS; }
+	static int GetFPS(void) { return m_nFPS; }
 	D3DXCOLOR GetBgCol(void) { return m_bgCol; }
 	void SetBgCol(D3DXCOLOR col);
 
@@ -45,7 +45,6 @@ private:
 	UINT m_ResizeWidth;
 	UINT m_ResizeHeight;
 	D3DPRESENT_PARAMETERS m_d3dpp;
-	HWND m_hWnd;
-	int m_nFPS;
+	static int m_nFPS;
 };
 #endif

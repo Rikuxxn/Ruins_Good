@@ -22,6 +22,7 @@ public:
 
 	void Init(void);
 	void Uninit(void);
+	void UpdateInfo(void);
 	static void Print(const char* fmt, ...);
 	static void Draw(D3DXCOLOR col,int posX,int posY);
 

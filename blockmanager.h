@@ -25,7 +25,8 @@ public:
     void Uninit(void);
     void UpdateInfo(void); // ImGui‚Å‚Ì•\Ž¦
 
-    static CBlock* CreateBlock(const char* filepath, D3DXVECTOR3 pos, D3DXVECTOR3 rot, D3DXVECTOR3 size);
+    static CBlock* CreateBlock(CBlock::TYPE type, D3DXVECTOR3 pos);
+    static const char* GetFilePathFromType(CBlock::TYPE type);
     void SaveToJson(const char* filename);
     void LoadFromJson(const char* filename);
     //CBlock* GetBlock(int index);
