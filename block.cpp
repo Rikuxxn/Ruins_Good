@@ -76,7 +76,22 @@ CBlock* CBlock::CreateFromType(TYPE type, D3DXVECTOR3 pos)
 		break;
 
 	case TYPE_WALL:
-		path = "data/MODELS/wall.x";
+		path = "data/MODELS/wall_01.x";
+		size = { 1.0f, 1.0f, 1.0f };
+		break;
+
+	case TYPE_WALL2:
+		path = "data/MODELS/wall_02.x";
+		size = { 1.0f, 1.0f, 1.0f };
+		break;
+
+	case TYPE_WALL3:
+		path = "data/MODELS/wall_03.x";
+		size = { 1.0f, 1.0f, 1.0f };
+		break;
+
+	case TYPE_WALL4:
+		path = "data/MODELS/wall_04.x";
 		size = { 1.0f, 1.0f, 1.0f };
 		break;
 
@@ -172,14 +187,39 @@ const char* CBlock::GetTexPathFromType(TYPE type)
 	{
 	case TYPE_WOODBOX: 
 		return "data/TEXTURE/woodbox.png";
+
 	case TYPE_WALL: 
-		return "data/TEXTURE/wall.png";
+		return "data/TEXTURE/wall1.png";
+
+	case TYPE_WALL2:
+		return "data/TEXTURE/wall2.png";
+
+	case TYPE_WALL3:
+		return "data/TEXTURE/wall3.png";
+
+	case TYPE_WALL4:
+		return "data/TEXTURE/wall4.png";
+
 	case TYPE_AXE: 
 		return "data/TEXTURE/Axe.png";
+
 	case TYPE_IKADA: 
 		return "data/TEXTURE/ikada.png";
+
 	case TYPE_ROCK:
 		return "data/TEXTURE/rock.png";
+
+	case TYPE_TORCH:
+		return "data/TEXTURE/torch1.png";
+
+	case TYPE_TORCH2:
+		return "data/TEXTURE/torch2.png";
+
+	case TYPE_FLOOR:
+		return "data/TEXTURE/floor1.png";
+
+	case TYPE_FLOOR2:
+		return "data/TEXTURE/floor2.png";
 
 	default: 
 		return "";

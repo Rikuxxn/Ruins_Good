@@ -1,19 +1,8 @@
-﻿  pch.cpp
-  FileDialogUtils.cpp
-  block.cpp
+﻿  block.cpp
   blockmanager.cpp
   camera.cpp
   debugproc.cpp
   effect.cpp
-  imgui.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_dx9.cpp
-  imgui_impl_win32.cpp
-  imgui_tables.cpp
-  imgui_widgets.cpp
-  imguimaneger.cpp
-C:\Users\student\Desktop\RuinsGood\Ruins_Good\imguimaneger.cpp(48,10): warning C4189: 'myFont': ローカル変数が初期化されましたが、参照されていません
   input.cpp
   light.cpp
   main.cpp
@@ -22,8 +11,6 @@ C:\Users\student\Desktop\RuinsGood\Ruins_Good\main.cpp(30,65): warning C4100: 'h
   manager.cpp
   meshfield.cpp
   model.cpp
-  コードを生成中...
-  コンパイル中...
   motion.cpp
   number.cpp
   object.cpp
@@ -31,13 +18,13 @@ C:\Users\student\Desktop\RuinsGood\Ruins_Good\main.cpp(30,65): warning C4100: 'h
   object3D.cpp
   objectBillboard.cpp
   objectX.cpp
-  particle.cpp
   pause.cpp
   player.cpp
+  コードを生成中...
+  コンパイル中...
   renderer.cpp
   score.cpp
   shadow.cpp
-  sound.cpp
   texture.cpp
   time.cpp
   コードを生成中...

@@ -94,8 +94,8 @@ HRESULT CPlayer::Init(void)
 	// プレイヤーが使われている
 	m_playerUse = true;
 
-	// 影の生成
-	m_pShadow = CShadow::Create(m_pos, 100, 25.0f, 0.1f, 25.0f);
+	//// 影の生成
+	//m_pShadow = CShadow::Create(m_pos, 100, 25.0f, 0.1f, 25.0f);
 
 	return S_OK;
 }
@@ -321,14 +321,14 @@ void CPlayer::Update(void)
 	m_pos.z += m_move.z;
 	m_pos.y += m_move.y;
 
-	if (m_pShadow != NULL)
-	{
-		D3DXVECTOR3 shadowPos = m_pos;
-		shadowPos.y = 0.05f;
+	//if (m_pShadow != NULL)
+	//{
+	//	D3DXVECTOR3 shadowPos = m_pos;
+	//	shadowPos.y = 8.1f;
 
-		// 影の位置設定
-		m_pShadow->SetPosition(shadowPos);
-	}
+	//	// 影の位置設定
+	//	m_pShadow->SetPosition(shadowPos);
+	//}
 
 	// 移動量を更新(減衰させる)
 	m_move.x += (0.0f - m_move.x) * 0.3f;

@@ -34,6 +34,7 @@ public:
 
 private:
     static std::vector<CBlock*> m_blocks;   // ブロック情報
+    static int m_nNumAll;                   // 総数
     static int m_selectedIdx;               // 選択中のインデックス
     int m_prevSelectedIdx;
 };

@@ -19,6 +19,7 @@ using json = nlohmann::json;
 // 静的メンバ変数宣言
 //*****************************************************************************
 std::vector<CBlock*> CBlockManager::m_blocks;	// ブロックの情報
+int CBlockManager::m_nNumAll = 0;				// ブロックの総数
 int CBlockManager::m_selectedIdx = 0;			// 選択中のインデックス
 
 //=============================================================================
@@ -35,6 +36,23 @@ CBlockManager::CBlockManager()
 CBlockManager::~CBlockManager()
 {
 	// なし
+}
+//=============================================================================
+// 生成処理
+//=============================================================================
+CBlock* CBlockManager::CreateBlock(CBlock::TYPE type, D3DXVECTOR3 pos)
+{
+	const char* path = CBlockManager::GetFilePathFromType(type);
+
+	CBlock* newBlock = CBlock::Create(path, pos, D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(1, 1, 1));
+
+	if (newBlock)
+	{
+		newBlock->SetType(type); // タイプを設定
+		m_blocks.push_back(newBlock);
+		m_nNumAll++;			// 総数のカウントアップ
+	}
+	return newBlock;
 }
 //=============================================================================
 // 初期化処理
@@ -72,7 +90,7 @@ void CBlockManager::UpdateInfo(void)
 	pImGuiManager->SetPosImgui(ImVec2(1900.0f, 20.0f));
 
 	// サイズ
-	pImGuiManager->SetSizeImgui(ImVec2(400.0f, 500.0f));
+	pImGuiManager->SetSizeImgui(ImVec2(420.0f, 500.0f));
 
 	// 最初のGUI
 	pImGuiManager->StartImgui(u8"BlockInfo", CImGuiManager::IMGUITYPE_DEFOULT);
@@ -89,6 +107,11 @@ void CBlockManager::UpdateInfo(void)
 		{
 			m_selectedIdx = (int)m_blocks.size() - 1;
 		}
+
+		// ブロックの総数
+		ImGui::Text("Block Num %d", m_nNumAll);
+
+		ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
 
 		// インデックス選択
 		ImGui::SliderInt("Block Index", &m_selectedIdx, 0, (int)m_blocks.size() - 1);
@@ -213,7 +236,11 @@ void CBlockManager::UpdateInfo(void)
 
 			if (ImGui::Button("Delete"))
 			{
+				m_nNumAll--;		// 総数のカウントダウン
+
+				// 選択中のブロックを削除
 				m_blocks[m_selectedIdx]->Uninit();
+
 				m_blocks.erase(m_blocks.begin() + m_selectedIdx);
 
 				// 選択インデックスを調整
@@ -274,7 +301,7 @@ void CBlockManager::UpdateInfo(void)
 		ImGui::TreePop(); // ツリー閉じる
 	}
 
-	ImVec2 panelSize = ImVec2(400, 300); // 適当なサイズ
+	ImVec2 panelSize = ImVec2(400, 100); // 適当なサイズ
 
 	// ドロップできる範囲
 	ImGui::InvisibleButton("DropTargetZone", panelSize);
@@ -324,22 +351,6 @@ void CBlockManager::UpdateInfo(void)
 	ImGui::End();
 }
 //=============================================================================
-// 生成処理
-//=============================================================================
-CBlock* CBlockManager::CreateBlock(CBlock::TYPE type, D3DXVECTOR3 pos)
-{
-	const char* path = CBlockManager::GetFilePathFromType(type);
-
-	CBlock* newBlock = CBlock::Create(path, pos, D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(1, 1, 1));
-
-	if (newBlock)
-	{
-		newBlock->SetType(type); // タイプを明示的に設定
-		m_blocks.push_back(newBlock);
-	}
-	return newBlock;
-}
-//=============================================================================
 // タイプからファイルパスを取得
 //=============================================================================
 const char* CBlockManager::GetFilePathFromType(CBlock::TYPE type)
@@ -347,15 +358,40 @@ const char* CBlockManager::GetFilePathFromType(CBlock::TYPE type)
 	switch (type)
 	{
 	case CBlock::TYPE_WOODBOX:
-		return "data/MODELS/woodbox_001.x";
+		return "data/MODELS/woodbox_003.x";
+
 	case CBlock::TYPE_WALL:
-		return "data/MODELS/wall_001.x";
+		return "data/MODELS/wall_01.x";
+
+	case CBlock::TYPE_WALL2:
+		return "data/MODELS/wall_02.x";
+
+	case CBlock::TYPE_WALL3:
+		return "data/MODELS/wall_03.x";
+
+	case CBlock::TYPE_WALL4:
+		return "data/MODELS/wall_04.x";
+
 	case CBlock::TYPE_AXE:
 		return "data/MODELS/Axe_01.x";
+
 	case CBlock::TYPE_IKADA:
 		return "data/MODELS/ikada.x";
+
 	case CBlock::TYPE_ROCK:
 		return "data/MODELS/Rock_001.x";
+
+	case CBlock::TYPE_TORCH:
+		return "data/MODELS/torch_01.x";
+
+	case CBlock::TYPE_TORCH2:
+		return "data/MODELS/torch_02.x";
+
+	case CBlock::TYPE_FLOOR:
+		return "data/MODELS/floor_01.x";
+
+	case CBlock::TYPE_FLOOR2:
+		return "data/MODELS/floor_02.x";
 
 	default: 
 		return "";

@@ -233,6 +233,8 @@ void CObjectX::Draw(void)
 
 	for (int nCntMat = 0; nCntMat < (int)m_dwNumMat; nCntMat++)
 	{
+#ifdef _DEBUG
+
 		// 元のマテリアル色に補正を掛ける
 		D3DMATERIAL9 mat = pMat[nCntMat].MatD3D;
 
@@ -243,6 +245,13 @@ void CObjectX::Draw(void)
 
 		// マテリアルの設定
 		pDevice->SetMaterial(&mat);
+
+#else
+
+		// マテリアルの設定
+		pDevice->SetMaterial(&pMat[nCntMat].MatD3D);
+
+#endif
 
 		if (m_nIdxTexture[nCntMat] == -1)
 		{
