@@ -38,8 +38,8 @@
 #pragma comment(lib,"dinput8.lib")								// 入力処理に必要
 #pragma comment(lib,"xinput.lib")								// ジョイパッド処理に必要
 
-//// Bullet Physics
-//#include <btBulletDynamicsCommon.h>
+// Bullet Physics
+#include <btBulletDynamicsCommon.h>
 
 //*****************************************************************************
 // マクロ定義

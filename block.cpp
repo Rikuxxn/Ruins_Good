@@ -110,6 +110,11 @@ CBlock* CBlock::CreateFromType(TYPE type, D3DXVECTOR3 pos)
 		size = { 1.0f, 1.0f, 1.0f };
 		break;
 
+	case TYPE_DOOR:
+		path = "data/MODELS/wall_door_01.x";
+		size = { 1.0f, 1.0f, 1.0f };
+		break;
+
 	default:
 		return NULL;
 	}
@@ -220,6 +225,18 @@ const char* CBlock::GetTexPathFromType(TYPE type)
 
 	case TYPE_FLOOR2:
 		return "data/TEXTURE/floor2.png";
+
+	case TYPE_DOOR:
+		return "data/TEXTURE/wall_door1.png";
+
+	case TYPE_CEILING:
+		return "data/TEXTURE/ceiling1.png";
+
+	case TYPE_CEILING2:
+		return "data/TEXTURE/ceiling2.png";
+
+	case TYPE_DOOR_BODY:
+		return "data/TEXTURE/door1.png";
 
 	default: 
 		return "";

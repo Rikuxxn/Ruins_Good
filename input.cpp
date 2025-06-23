@@ -562,7 +562,7 @@ D3DXVECTOR3 CInputMouse::GetGroundHitPosition(void)
 	pDevice->GetTransform(D3DTS_VIEW, &matView);
 	D3DXMatrixIdentity(&matWorld);
 
-	// マウス座標取得（クライアント座標系）
+	// マウス座標取得
 	POINT mousePos;
 	GetCursorPos(&mousePos);
 
@@ -580,12 +580,13 @@ D3DXVECTOR3 CInputMouse::GetGroundHitPosition(void)
 	rayDir -= rayOrigin;
 	D3DXVec3Normalize(&rayDir, &rayDir);
 
-	// 地面(Y=0)との交点
+	// 地面(Y = 0)との交点
 	if (fabsf(rayDir.y) < 1e-5f)
 	{
 		return D3DXVECTOR3(0, 0, 0); // 水平レイ対策
 	}
 
 	float t = -rayOrigin.y / rayDir.y;
+
 	return rayOrigin + rayDir * t;
 }

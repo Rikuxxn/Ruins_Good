@@ -57,6 +57,10 @@ private:
 		"data/TEXTURE/torch2.png",
 		"data/TEXTURE/floor1.png",
 		"data/TEXTURE/floor2.png",
+		"data/TEXTURE/wall_door1.png",
+		"data/TEXTURE/ceiling1.png",
+		"data/TEXTURE/ceiling2.png",
+		"data/TEXTURE/door1.png",
 	};
 
 	LPDIRECT3DTEXTURE9 m_apTexture[MAX_TEXTURE];

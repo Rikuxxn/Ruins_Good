@@ -318,7 +318,7 @@ void CBlockManager::UpdateInfo(void)
 		}
 	}
 
-	ImGui::SameLine();
+	ImGui::SameLine(0);
 
 	if (ImGui::Button("Load"))
 	{
@@ -428,6 +428,18 @@ const char* CBlockManager::GetFilePathFromType(CBlock::TYPE type)
 
 	case CBlock::TYPE_FLOOR2:
 		return "data/MODELS/floor_02.x";
+
+	case CBlock::TYPE_DOOR:
+		return "data/MODELS/wall_door_01.x";
+
+	case CBlock::TYPE_CEILING:
+		return "data/MODELS/ceiling_01.x";
+
+	case CBlock::TYPE_CEILING2:
+		return "data/MODELS/ceiling_02.x";
+
+	case CBlock::TYPE_DOOR_BODY:
+		return "data/MODELS/door_01.x";
 
 	default: 
 		return "";

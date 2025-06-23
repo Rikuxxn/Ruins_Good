@@ -279,7 +279,7 @@ void CPlayer::Update(void)
 	}
 
 	// ƒWƒƒƒ“ƒv
-	if (!m_isJumping && pInputKeyboard->GetTrigger(DIK_SPACE))
+	if (!m_isJumping && (pInputKeyboard->GetTrigger(DIK_SPACE) || pInputJoypad->GetTrigger(CInputJoypad::JOYKEY_A)))
 	{
 		m_isJumping = true;
 		m_move.y = MAX_JUMP_POWER;

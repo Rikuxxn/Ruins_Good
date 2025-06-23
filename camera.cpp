@@ -116,7 +116,7 @@ void CCamera::UpdateInfo(void)
 
 	if (ImGui::TreeNode("Camera Info"))
 	{
-		ImGui::Text("Camera Mode Change : [Press C]");
+		ImGui::Text("Change Camera Mode : [Press C]");
 
 		ImGui::Dummy(ImVec2(0.0f, 10.0f)); // ‹ó”’‚ð‹ó‚¯‚é
 

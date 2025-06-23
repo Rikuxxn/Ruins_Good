@@ -41,7 +41,7 @@ void CImGuiManager::Init(HWND hWnd, LPDIRECT3DDEVICE9 pDevice)
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Dear ImGui style
-	ImGui::StyleColorsClassic();
+	ImGui::StyleColorsDark();
 	// ImGui::StyleColorsLight(); // 他のスタイルも選べます
 
 	// フォント設定（デフォルトのフォントとして Consolas を使用）
