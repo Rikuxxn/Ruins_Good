@@ -540,3 +540,52 @@ void CInputMouse::SetCursorVisibility(bool visible)
 		}
 	}
 }
+//=============================================================================
+// 地面(Y = 0)との交差点を取得する処理
+//=============================================================================
+D3DXVECTOR3 CInputMouse::GetGroundHitPosition(void)
+{
+	// デバイスの取得
+	CRenderer* renderer = CManager::GetRenderer();
+	LPDIRECT3DDEVICE9 pDevice = renderer->GetDevice();
+
+	if (!pDevice)
+	{
+		return D3DXVECTOR3(0, 0, 0);
+	}
+
+	// ビューポートと行列取得
+	D3DVIEWPORT9 viewport;
+	D3DXMATRIX matProj, matView, matWorld;
+	pDevice->GetViewport(&viewport);
+	pDevice->GetTransform(D3DTS_PROJECTION, &matProj);
+	pDevice->GetTransform(D3DTS_VIEW, &matView);
+	D3DXMatrixIdentity(&matWorld);
+
+	// マウス座標取得（クライアント座標系）
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+
+	// ウィンドウハンドルを取得
+	HWND hwnd = GetActiveWindow();
+	ScreenToClient(hwnd, &mousePos);
+
+	// スクリーン座標→ワールド座標変換
+	D3DXVECTOR3 nearPoint((float)mousePos.x, (float)mousePos.y, 0.0f);
+	D3DXVECTOR3 farPoint((float)mousePos.x, (float)mousePos.y, 1.0f);
+	D3DXVECTOR3 rayOrigin, rayDir;
+
+	D3DXVec3Unproject(&rayOrigin, &nearPoint, &viewport, &matProj, &matView, &matWorld);
+	D3DXVec3Unproject(&rayDir, &farPoint, &viewport, &matProj, &matView, &matWorld);
+	rayDir -= rayOrigin;
+	D3DXVec3Normalize(&rayDir, &rayDir);
+
+	// 地面(Y=0)との交点
+	if (fabsf(rayDir.y) < 1e-5f)
+	{
+		return D3DXVECTOR3(0, 0, 0); // 水平レイ対策
+	}
+
+	float t = -rayOrigin.y / rayDir.y;
+	return rayOrigin + rayDir * t;
+}

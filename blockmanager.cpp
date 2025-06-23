@@ -12,6 +12,7 @@
 #include "json.hpp"
 #include "FileDialogUtils.h"
 #include "manager.h"
+#include "imgui_internal.h"
 
 using json = nlohmann::json;
 
@@ -21,6 +22,7 @@ using json = nlohmann::json;
 std::vector<CBlock*> CBlockManager::m_blocks;	// ブロックの情報
 int CBlockManager::m_nNumAll = 0;				// ブロックの総数
 int CBlockManager::m_selectedIdx = 0;			// 選択中のインデックス
+CBlock* CBlockManager::m_draggingBlock = {};
 
 //=============================================================================
 // コンストラクタ
@@ -29,6 +31,7 @@ CBlockManager::CBlockManager()
 {
 	// 値のクリア
 	m_prevSelectedIdx = -1;
+	m_hasConsumedPayload = false;
 }
 //=============================================================================
 // デストラクタ
@@ -301,25 +304,6 @@ void CBlockManager::UpdateInfo(void)
 		ImGui::TreePop(); // ツリー閉じる
 	}
 
-	ImVec2 panelSize = ImVec2(400, 100); // 適当なサイズ
-
-	// ドロップできる範囲
-	ImGui::InvisibleButton("DropTargetZone", panelSize);
-
-	// ドロップ受け取り（原点に配置
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("BLOCK_TYPE"))
-		{
-			CBlock::TYPE droppedType = *(CBlock::TYPE*)payload->Data;
-
-			// 原点にブロックを生成
-			D3DXVECTOR3 pos(0.0f, 0.0f, 0.0f);
-			CBlockManager::CreateBlock(droppedType, pos);
-		}
-		ImGui::EndDragDropTarget();
-	}
-
 	ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
 
 	if (ImGui::Button("Save"))
@@ -349,6 +333,58 @@ void CBlockManager::UpdateInfo(void)
 	}
 
 	ImGui::End();
+}
+//=============================================================================
+// ブロックのドラッグ処理
+//=============================================================================
+void CBlockManager::UpdateDraggingBlock(void)
+{
+	// マウスの取得
+	CInputMouse* pMouse = CManager::GetInputMouse();
+
+	// 現在のImGuiの内部状態（コンテキスト）へのポインターを取得
+	ImGuiContext* ctx = ImGui::GetCurrentContext();
+
+	if (!m_draggingBlock && !m_hasConsumedPayload)
+	{
+		// ドラッグ＆ドロップ中なら即生成して追従開始
+		if (ctx->DragDropActive && ctx->DragDropPayload.Data && ctx->DragDropPayload.DataSize == sizeof(CBlock::TYPE))
+		{
+			if (ctx->DragDropPayload.IsDataType("BLOCK_TYPE"))
+			{
+				CBlock::TYPE draggedType = *(CBlock::TYPE*)ctx->DragDropPayload.Data;
+
+				D3DXVECTOR3 pos = pMouse->GetGroundHitPosition();
+				pos.y = 0.0f;
+
+				// ブロックの生成
+				m_draggingBlock = CreateBlock(draggedType, pos);
+
+				m_hasConsumedPayload = true;
+			}
+		}
+	}
+	else
+	{
+		// ドラッグ中はマウスに追従させる
+		if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+		{
+			D3DXVECTOR3 pos = pMouse->GetGroundHitPosition();
+			pos.y = 0.0f;
+			m_draggingBlock->SetPos(pos);
+		}
+		else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
+		{
+			// ドラッグ終了
+			m_draggingBlock = NULL;
+		}
+
+		// ImGuiのドラッグドロップが完全に終わったらフラグリセット
+		if (!ctx->DragDropActive)
+		{
+			m_hasConsumedPayload = false;
+		}
+	}
 }
 //=============================================================================
 // タイプからファイルパスを取得
@@ -472,8 +508,9 @@ void CBlockManager::LoadFromJson(const char* filename)
 
 		D3DXVECTOR3 pos(b["pos"][0], b["pos"][1], b["pos"][2]);
 		D3DXVECTOR3 degRot(b["rot"][0], b["rot"][1], b["rot"][2]);
-		D3DXVECTOR3 rot = D3DXToRadian(degRot); // 度→ラジアンに変換
 		D3DXVECTOR3 size(b["size"][0], b["size"][1], b["size"][2]);
+
+		D3DXVECTOR3 rot = D3DXToRadian(degRot); // 度→ラジアンに変換
 
 		// タイプからブロック生成
 		CBlock* block = CreateBlock(type, pos);

@@ -147,7 +147,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd)
 	//CMeshfield::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1200.0f, 1200.0f);
 
 	// プレイヤーの生成
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 6.0f, -300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, -300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	////// ブロックの生成
 	//m_pBlock = CBlockManager::CreateBlock(CBlock::TYPE_WOODBOX, D3DXVECTOR3(-300.0f, 110.0f, 0.0f));
@@ -375,6 +375,9 @@ void CManager::Update(void)
 
 	// ブロックマネージャーの情報の更新
 	m_pBlockManager->UpdateInfo();
+
+	// ブロックマネージャーのドラッグ処理の更新
+	m_pBlockManager->UpdateDraggingBlock();
 
 	// レンダラーの更新
 	m_pRenderer->Update();

@@ -21,8 +21,9 @@
 // マクロ定義
 //*****************************************************************************
 #define MAX_PARTS		(32)		// 最大パーツ数
-#define PLAYER_SPEED	(0.90f)		// 移動スピード
-
+#define PLAYER_SPEED	(1.20f)		// 移動スピード
+#define MAX_JUMP_POWER	(6.3f)		// ジャンプ初速
+#define MAX_GRAVITY		(-0.26f)	// 重力加速度
 
 //*****************************************************************************
 // プレイヤークラス
@@ -56,6 +57,7 @@ private:
 	CShadow* m_pShadow;					// 影へのポインタ
 	CMotion* m_pMotion;					// モーションへのポインタ
 	CMotion::TYPE m_currentMotion;		// 現在のモーション
+	bool m_isJumping;					// ジャンプ中フラグ
 };
 
 #endif

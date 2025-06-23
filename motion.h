@@ -36,6 +36,7 @@ public:
 		TYPE_NEUTRAL = 0,	// 待機
 		TYPE_MOVE,			// 移動
 		TYPE_ACTION,		// アクション
+		TYPE_JUMP,			// ジャンプ
 		TYPE_MAX
 	}TYPE;
 

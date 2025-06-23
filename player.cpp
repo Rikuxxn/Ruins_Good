@@ -30,8 +30,8 @@ CPlayer::CPlayer()
 	m_playerUse		= true;							// 使われているかどうか
 	m_pShadow		= NULL;							// 影へのポインタ
 	m_pMotion		= NULL;							// モーションへのポインタ
-	m_currentMotion = CMotion::TYPE_NEUTRAL;
-
+	m_currentMotion = CMotion::TYPE_NEUTRAL;		// 現在のモーション
+	m_isJumping = false;							// ジャンプ中フラグ
 	for (int nCnt = 0; nCnt < MAX_PARTS; nCnt++)
 	{
 		m_apModel[nCnt] = {};						// モデル(パーツ)へのポインタ
@@ -279,28 +279,54 @@ void CPlayer::Update(void)
 	}
 
 	// ジャンプ
-	if (pInputKeyboard->GetTrigger(DIK_SPACE) == true)
+	if (!m_isJumping && pInputKeyboard->GetTrigger(DIK_SPACE))
 	{
+		m_isJumping = true;
+		m_move.y = MAX_JUMP_POWER;
+
+		m_pMotion->StartBlendMotion(CMotion::TYPE_JUMP, 10);
+		m_currentMotion = CMotion::TYPE_JUMP;
+	}
 
 
+	// 接地していないなら常に重力をかける
+	if (m_pos.y > 0.0f)
+	{
+		m_move.y += MAX_GRAVITY;  // 重力
+	}
+	else if (m_pos.y <= 0.0f && m_move.y < 0.0f)
+	{
+		// 着地処理
+		m_pos.y = 0.0f;
+		m_move.y = 0.0f;
 
+		if (m_isJumping) // すでにジャンプしていたときだけ着地処理
+		{
+			m_pMotion->StartBlendMotion(CMotion::TYPE_NEUTRAL, 15);
+			m_currentMotion = CMotion::TYPE_NEUTRAL;
+		}
+
+		m_isJumping = false;
 	}
 
 	// モーション切り替え
-	if (bIsMoving)
+	if (!m_isJumping)  // ジャンプ中はモーションを変えない
 	{
-		if (m_currentMotion == CMotion::TYPE_NEUTRAL)
+		if (bIsMoving)
 		{
-			m_pMotion->StartBlendMotion(CMotion::TYPE_MOVE, 10);
-			m_currentMotion = CMotion::TYPE_MOVE;
+			if (m_currentMotion == CMotion::TYPE_NEUTRAL)
+			{// 移動モーションへ
+				m_pMotion->StartBlendMotion(CMotion::TYPE_MOVE, 10);
+				m_currentMotion = CMotion::TYPE_MOVE;
+			}
 		}
-	}
-	else
-	{
-		if (m_currentMotion == CMotion::TYPE_MOVE)
+		else
 		{
-			m_pMotion->StartBlendMotion(CMotion::TYPE_NEUTRAL, 10);
-			m_currentMotion = CMotion::TYPE_NEUTRAL;
+			if (m_currentMotion == CMotion::TYPE_MOVE)
+			{// 待機モーションへ
+				m_pMotion->StartBlendMotion(CMotion::TYPE_NEUTRAL, 10);
+				m_currentMotion = CMotion::TYPE_NEUTRAL;
+			}
 		}
 	}
 
@@ -333,7 +359,6 @@ void CPlayer::Update(void)
 	// 移動量を更新(減衰させる)
 	m_move.x += (0.0f - m_move.x) * 0.3f;
 	m_move.z += (0.0f - m_move.z) * 0.3f;
-	m_move.y += (0.0f - m_move.y) * 0.1f;
 
 	int nNumModels = 10;
 

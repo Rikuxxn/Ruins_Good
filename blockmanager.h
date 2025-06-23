@@ -24,6 +24,7 @@ public:
     void Init(void);
     void Uninit(void);
     void UpdateInfo(void); // ImGuiでの表示
+    void UpdateDraggingBlock(void);
 
     static CBlock* CreateBlock(CBlock::TYPE type, D3DXVECTOR3 pos);
     static const char* GetFilePathFromType(CBlock::TYPE type);
@@ -34,9 +35,11 @@ public:
 
 private:
     static std::vector<CBlock*> m_blocks;   // ブロック情報
+    static CBlock* m_draggingBlock;         // ドラッグ中のブロック情報
     static int m_nNumAll;                   // 総数
     static int m_selectedIdx;               // 選択中のインデックス
     int m_prevSelectedIdx;
+    bool m_hasConsumedPayload ;      // ペイロード生成済みフラグ
 };
 
 #endif

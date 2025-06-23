@@ -127,6 +127,7 @@ public:
 	bool GetMouseState(DIMOUSESTATE* mouseState);
 	static int GetWheel(void);
 	static void SetCursorVisibility(bool visible);
+	D3DXVECTOR3 GetGroundHitPosition(void); // 地面Y=0との交差点を取得
 private:
 	static DIMOUSESTATE m_mouseState;			// マウスの状態
 };
