@@ -99,7 +99,9 @@ HRESULT CPlayer::Init(void)
 	// プレイヤーが使われている
 	m_playerUse = true;
 
-	// Bullet Physics 用カプセルコライダーの作成
+	//*********************************************************************
+	// Bullet Physics カプセルコライダーの設定
+	//*********************************************************************
 	m_radius = 20.5f;
 	m_height = 70.0f;
 
@@ -119,11 +121,11 @@ HRESULT CPlayer::Init(void)
 
 	m_pRigidBody = new btRigidBody(rbInfo);
 
-	m_pRigidBody->setAngularFactor(btVector3(0, 0, 0)); // これで角運動量の影響をゼロに
+	//m_pRigidBody->setAngularFactor(btVector3(0, 0, 0)); // これで角運動量の影響をゼロに
 
-	// キネマティック設定：重力・物理演算無視、自前で位置制御
-	m_pRigidBody->setCollisionFlags(m_pRigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
-	m_pRigidBody->setActivationState(DISABLE_DEACTIVATION);
+	//// キネマティック設定：重力・物理演算無視、自前で位置制御
+	//m_pRigidBody->setCollisionFlags(m_pRigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+	//m_pRigidBody->setActivationState(DISABLE_DEACTIVATION);
 
 	// 物理ワールドに追加
 	btDiscreteDynamicsWorld* pWorld = CManager::GetPhysicsWorld();
@@ -539,15 +541,6 @@ void CPlayer::UpdateInfo(void)
 		if (m_pRigidBody)
 		{
 			m_pRigidBody->setCollisionShape(m_pShape);
-
-			//// 物理ワールドに追加
-			//btDiscreteDynamicsWorld* pWorld = CManager::GetPhysicsWorld();
-
-			//// AABBを更新
-			//if (pWorld)
-			//{
-			//	pWorld->updateSingleAabb(m_pRigidBody);
-			//}
 		}
 
 		// 値を記録

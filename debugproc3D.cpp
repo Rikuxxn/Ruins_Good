@@ -95,7 +95,7 @@ void CDebugProc3D::DrawCapsuleCollider(btCapsuleShape* capsule, const btTransfor
     CRenderer* renderer = CManager::GetRenderer();
     LPDIRECT3DDEVICE9 pDevice = renderer->GetDevice();
 
-    const int kNumSegments = 16;
+    const int kNumSegments = 12;  // ï™äÑêî
     const int kNumRings = 4;      // ècï™äÑ
 
     float radius = capsule->getRadius();
@@ -141,14 +141,6 @@ void CDebugProc3D::DrawCapsuleCollider(btCapsuleShape* capsule, const btTransfor
 
         dir1 *= radius;
         dir2 *= radius;
-
-        // è„ÇÃâ~
-        DrawLine3D(D3DXVECTOR3((top + dir1).x(), (top + dir1).y(), (top + dir1).z()),
-            D3DXVECTOR3((top + dir2).x(), (top + dir2).y(), (top + dir2).z()), color);
-
-        // â∫ÇÃâ~
-        DrawLine3D(D3DXVECTOR3((bottom + dir1).x(), (bottom + dir1).y(), (bottom + dir1).z()),
-            D3DXVECTOR3((bottom + dir2).x(), (bottom + dir2).y(), (bottom + dir2).z()), color);
 
         // ë§ñ ÇÃê¸
         DrawLine3D(D3DXVECTOR3((top + dir1).x(), (top + dir1).y(), (top + dir1).z()),

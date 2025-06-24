@@ -105,12 +105,6 @@ void CBlockManager::UpdateInfo(void)
 	}
 	else
 	{
-		// 範囲外対策
-		if (m_selectedIdx >= (int)m_blocks.size())
-		{
-			m_selectedIdx = (int)m_blocks.size() - 1;
-		}
-
 		// ブロックの総数
 		ImGui::Text("Block Num %d", m_nNumAll);
 
@@ -118,6 +112,12 @@ void CBlockManager::UpdateInfo(void)
 
 		// インデックス選択
 		ImGui::SliderInt("Block Index", &m_selectedIdx, 0, (int)m_blocks.size() - 1);
+
+		// 範囲外対策
+		if (m_selectedIdx >= (int)m_blocks.size())
+		{
+			m_selectedIdx = (int)m_blocks.size() - 1;
+		}
 
 		// 前回選んでたブロックを解除
 		if (m_prevSelectedIdx != -1 && m_prevSelectedIdx != m_selectedIdx)
