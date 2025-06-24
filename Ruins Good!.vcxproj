@@ -163,6 +163,7 @@
     <ClCompile Include="blockmanager.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="debugproc.cpp" />
+    <ClCompile Include="debugproc3D.cpp" />
     <ClCompile Include="effect.cpp" />
     <ClCompile Include="FileDialogUtils.cpp" />
     <ClCompile Include="imgui.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="blockmanager.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="debugproc.h" />
+    <ClInclude Include="debugproc3D.h" />
     <ClInclude Include="effect.h" />
     <ClInclude Include="FileDialogUtils.h" />
     <ClInclude Include="imconfig.h" />

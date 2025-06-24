@@ -31,7 +31,12 @@ CPlayer::CPlayer()
 	m_pShadow		= NULL;							// 影へのポインタ
 	m_pMotion		= NULL;							// モーションへのポインタ
 	m_currentMotion = CMotion::TYPE_NEUTRAL;		// 現在のモーション
-	m_isJumping = false;							// ジャンプ中フラグ
+	m_isJumping		= false;						// ジャンプ中フラグ
+	m_pRigidBody	= NULL;							// 剛体へのポインタ
+	m_pShape		= NULL;							// 当たり判定の形へのポインタ
+	m_pDebug3D		= NULL;							// 3Dデバッグ表示へのポインタ
+	m_radius        = 0.0f;							// カプセルコライダーの半径
+	m_height		= 0.0f;							// カプセルコライダーの高さ
 	for (int nCnt = 0; nCnt < MAX_PARTS; nCnt++)
 	{
 		m_apModel[nCnt] = {};						// モデル(パーツ)へのポインタ
@@ -94,6 +99,40 @@ HRESULT CPlayer::Init(void)
 	// プレイヤーが使われている
 	m_playerUse = true;
 
+	// Bullet Physics 用カプセルコライダーの作成
+	m_radius = 20.5f;
+	m_height = 140.8f;
+
+	m_pShape = new btCapsuleShape(m_radius, m_height - 2.0f * m_radius);
+
+	// プレイヤーの位置を元にTransform作成
+	btTransform transform;
+	transform.setIdentity();
+	transform.setOrigin(btVector3(m_pos.x - 5.5f, m_pos.y + m_height / 2.0f, m_pos.z));
+
+	// 質量0にして完全制御（キネマティックにする）
+	btScalar mass = 0.0f;
+	btVector3 inertia(0, 0, 0);  // 質量0だと慣性は0でOK
+
+	btDefaultMotionState* motionState = new btDefaultMotionState(transform);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, m_pShape, inertia);
+
+	m_pRigidBody = new btRigidBody(rbInfo);
+
+	m_pRigidBody->setAngularFactor(btVector3(0, 0, 0)); // これで角運動量の影響をゼロに
+
+	// キネマティック設定：重力・物理演算無視、自前で位置制御
+	m_pRigidBody->setCollisionFlags(m_pRigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+	m_pRigidBody->setActivationState(DISABLE_DEACTIVATION);
+
+	// 物理ワールドに追加
+	btDiscreteDynamicsWorld* pWorld = CManager::GetPhysicsWorld();
+
+	if (pWorld != NULL)
+	{
+		pWorld->addRigidBody(m_pRigidBody);
+	}
+
 	//// 影の生成
 	//m_pShadow = CShadow::Create(m_pos, 100, 25.0f, 0.1f, 25.0f);
 
@@ -118,6 +157,21 @@ void CPlayer::Uninit(void)
 	{
 		delete m_pMotion;
 		m_pMotion = NULL;
+	}
+
+	if (m_pRigidBody)
+	{
+		auto world = CManager::GetPhysicsWorld();
+
+		if (world)
+		{
+			world->removeRigidBody(m_pRigidBody);
+			delete m_pRigidBody->getMotionState();
+			delete m_pRigidBody;
+			delete m_pShape;
+			m_pRigidBody = NULL;
+			m_pShape = NULL;
+		}
 	}
 
 	// オブジェクトの破棄(自分自身)
@@ -342,19 +396,15 @@ void CPlayer::Update(void)
 
 	m_rot.y += (m_rotDest.y - m_rot.y) * 0.2f;
 
+	btTransform trans;
+	trans.setIdentity();
+	trans.setOrigin(btVector3(m_pos.x, m_pos.y, m_pos.z));
+	m_pRigidBody->setWorldTransform(trans);
+	m_pRigidBody->getMotionState()->setWorldTransform(trans);
 	// 位置を更新
 	m_pos.x += m_move.x;
 	m_pos.z += m_move.z;
 	m_pos.y += m_move.y;
-
-	//if (m_pShadow != NULL)
-	//{
-	//	D3DXVECTOR3 shadowPos = m_pos;
-	//	shadowPos.y = 8.1f;
-
-	//	// 影の位置設定
-	//	m_pShadow->SetPosition(shadowPos);
-	//}
 
 	// 移動量を更新(減衰させる)
 	m_move.x += (0.0f - m_move.x) * 0.3f;
@@ -485,6 +535,20 @@ void CPlayer::Draw(void)
 			m_apModel[nCntMat]->Draw();
 		}
 	}
+
+#ifdef _DEBUG
+
+	// カプセルコライダーの描画
+	if (m_pRigidBody && m_pShape)
+	{
+		btTransform transform;
+		m_pRigidBody->getMotionState()->getWorldTransform(transform);
+
+		m_pDebug3D->DrawCapsuleCollider((btCapsuleShape*)m_pShape, transform, D3DXCOLOR(1, 1, 1, 1));
+	}
+
+#endif
+
 }
 //=============================================================================
 // 位置の取得

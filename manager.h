@@ -27,7 +27,6 @@
 #include "block.h"
 #include "blockmanager.h"
 
-
 //*****************************************************************************
 // マネージャークラス
 //*****************************************************************************
@@ -67,6 +66,8 @@ public:
 	int GetFPS(int fps) { return m_fps = fps; };
 	int GetFPSCnt(void) { return m_fps; }
 	static bool GetisPaused(void);
+	// 他クラスから物理ワールドを触りたい時用
+	static btDiscreteDynamicsWorld* GetPhysicsWorld(void) { return m_pDynamicsWorld; }
 
 private:
 	static CRenderer* m_pRenderer;				// レンダラーへのポインタ
@@ -92,15 +93,14 @@ private:
 	static CImGuiManager* m_pImGuiManager;		// ImGuiマネージャーへのポインタ
 
 	static std::vector<CBlock*> m_blocks;  // 複数のブロックを保持
-
 	int m_fps;
 	static bool m_isPaused; // trueならポーズ中
 
-	//btBroadphaseInterface* m_pBroadphase;						// おおまか衝突判定のクラスへのポインタ
-	//btDefaultCollisionConfiguration* m_pCollisionConfiguration ;// 衝突検出の設定を管理するクラスへのポインタ
-	//btCollisionDispatcher* m_pDispatcher;						// 実際に衝突判定処理を実行するクラスへのポインタ
-	//btSequentialImpulseConstraintSolver* m_pSolver;				// 物理シミュレーションの制約ソルバーへのポインタ
-	//btDiscreteDynamicsWorld* m_pDynamicsWorld;					// 物理世界を管理するクラスへのポインタ
+	btBroadphaseInterface* m_pBroadphase;						// おおまか衝突判定のクラスへのポインタ
+	btDefaultCollisionConfiguration* m_pCollisionConfiguration ;// 衝突検出の設定を管理するクラスへのポインタ
+	btCollisionDispatcher* m_pDispatcher;						// 実際に衝突判定処理を実行するクラスへのポインタ
+	btSequentialImpulseConstraintSolver* m_pSolver;				// 物理シミュレーションの制約ソルバーへのポインタ
+	static btDiscreteDynamicsWorld* m_pDynamicsWorld;			// 物理世界を管理するクラスへのポインタ
 };
 
 #endif

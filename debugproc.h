@@ -25,6 +25,8 @@ public:
 	void UpdateInfo(void);
 	static void Print(const char* fmt, ...);
 	static void Draw(D3DXCOLOR col,int posX,int posY);
+	void DrawLine3D(void);
+	void CircleXZ(void);
 
 private:
 	static LPD3DXFONT m_pFont;	// フォントへのポインタ

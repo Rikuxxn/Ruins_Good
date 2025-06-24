@@ -43,6 +43,7 @@ CBlock* CManager::m_pBlock = NULL;
 CImGuiManager* CManager::m_pImGuiManager = NULL;
 
 bool CManager::m_isPaused = false;
+btDiscreteDynamicsWorld* CManager::m_pDynamicsWorld = NULL;
 
 //=============================================================================
 // コンストラクタ
@@ -50,8 +51,13 @@ bool CManager::m_isPaused = false;
 CManager::CManager()
 {
 	// 値のクリア
-	m_fps = 0;
-	m_isPaused = false;
+	m_fps					  = 0;
+	m_isPaused				  = false;
+	m_pBroadphase			  = NULL;	// おおまか衝突判定のクラスへのポインタ
+	m_pCollisionConfiguration = NULL;	// 衝突検出の設定を管理するクラスへのポインタ
+	m_pDispatcher			  = NULL;	// 実際に衝突判定処理を実行するクラスへのポインタ
+	m_pSolver				  = NULL;	// 物理シミュレーションの制約ソルバーへのポインタ
+
 }
 //=============================================================================
 // デストラクタ
@@ -109,6 +115,17 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd)
 	{
 		return E_FAIL;
 	}
+
+	// Bullet物理ワールドの生成
+	m_pBroadphase = new btDbvtBroadphase();
+	m_pCollisionConfiguration = new btDefaultCollisionConfiguration();
+	m_pDispatcher = new btCollisionDispatcher(m_pCollisionConfiguration);
+	m_pSolver = new btSequentialImpulseConstraintSolver();
+
+	m_pDynamicsWorld = new btDiscreteDynamicsWorld(m_pDispatcher, m_pBroadphase, m_pSolver, m_pCollisionConfiguration);
+
+	// 重力を設定
+	m_pDynamicsWorld->setGravity(btVector3(0, -9.8f, 0));
 
 	// カメラの生成
 	m_pCamera = new CCamera;
@@ -179,17 +196,6 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd)
 
 	//m_pSound->Play(CSound::SOUND_LABEL_GAMEBGM);
 
-	//// Bullet物理ワールドの生成
-	//m_pBroadphase = new btDbvtBroadphase();
-	//m_pCollisionConfiguration = new btDefaultCollisionConfiguration();
-	//m_pDispatcher = new btCollisionDispatcher(m_pCollisionConfiguration);
-	//m_pSolver = new btSequentialImpulseConstraintSolver();
-
-	//m_pDynamicsWorld = new btDiscreteDynamicsWorld(m_pDispatcher, m_pBroadphase, m_pSolver, m_pCollisionConfiguration);
-
-	//// 重力を設定
-	//m_pDynamicsWorld->setGravity(btVector3(0, -9.8f, 0));
-
 	return S_OK;
 }
 //=============================================================================
@@ -222,36 +228,26 @@ void CManager::Uninit(void)
 	// サウンドの終了処理
 	m_pSound->Uninit();
 
-	//// Bullet Physicsの破棄
-	//if (m_pDynamicsWorld)
-	//{
-	//	delete m_pDynamicsWorld;
-	//	m_pDynamicsWorld = NULL;
-	//}
+	if (m_pDynamicsWorld)
+	{
+		// 先にワールドから全RigidBodyを外す→delete
+		int num = m_pDynamicsWorld->getNumCollisionObjects();
+		for (int i = num - 1; i >= 0; i--)
+		{
+			btCollisionObject* obj = m_pDynamicsWorld->getCollisionObjectArray()[i];
+			btRigidBody* body = btRigidBody::upcast(obj);
 
-	//if (m_pSolver)
-	//{
-	//	delete m_pSolver;
-	//	m_pSolver = NULL;
-	//}
-
-	//if (m_pDispatcher)
-	//{
-	//	delete m_pDispatcher;
-	//	m_pDispatcher = NULL;
-	//}
-
-	//if (m_pCollisionConfiguration)
-	//{
-	//	delete m_pCollisionConfiguration;
-	//	m_pCollisionConfiguration = NULL;
-	//}
-
-	//if (m_pBroadphase)
-	//{
-	//	delete m_pBroadphase;
-	//	m_pBroadphase = NULL;
-	//}
+			if (body && body->getMotionState())
+			{
+				delete body->getMotionState();
+				m_pDynamicsWorld->removeCollisionObject(obj);
+				delete obj;
+			}
+		}
+		delete m_pDynamicsWorld;  delete m_pSolver;
+		delete m_pDispatcher;     delete m_pCollisionConfiguration;
+		delete m_pBroadphase;
+	}
 
 	// ポーズの破棄
 	if (m_pPause != NULL)
@@ -359,7 +355,8 @@ void CManager::Update(void)
 		return;
 	}
 
-	//m_pDynamicsWorld->stepSimulation(1/60);
+	float deltaTime = 1.0f / 60.0f; // 60fps想定
+	m_pDynamicsWorld->stepSimulation(deltaTime);
 
 	// ジョイパッドの更新
 	m_pInputJoypad->Update();

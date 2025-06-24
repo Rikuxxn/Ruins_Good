@@ -17,6 +17,7 @@
 // 静的メンバ変数宣言
 //*****************************************************************************
 CDebugProc* CRenderer::m_pDebug = NULL;
+CDebugProc3D* CRenderer::m_pDebug3D = NULL;
 int CRenderer::m_nFPS = 0;
 
 //=============================================================================
@@ -124,6 +125,9 @@ HRESULT CRenderer::Init(HWND hWnd, BOOL bWindow)
 	// デバッグフォントの初期化
 	m_pDebug->Init();
 
+	// 3Dデバッグ表示の初期化
+	m_pDebug3D->Init();
+
 	// ImGuiマネージャーの取得
 	CImGuiManager* pImGuiManager = CManager::GetImGuiManager();
 
@@ -139,6 +143,9 @@ void CRenderer::Uninit(void)
 {
 	// デバッグフォントの終了処理
 	m_pDebug->Uninit();
+
+	// 3Dデバッグ表示の終了処理
+	m_pDebug3D->Uninit();
 
 	// Direct3Dデバイスの破棄
 	if (m_pD3DDevice != NULL)
@@ -253,6 +260,9 @@ void CRenderer::ResetDevice(void)
 	// デバッグフォントの破棄
 	m_pDebug->Uninit();
 
+	// 3Dデバッグ表示の破棄
+	m_pDebug3D->Uninit();
+
 	m_d3dpp.BackBufferWidth = m_ResizeWidth;
 	m_d3dpp.BackBufferHeight = m_ResizeHeight;
 	m_ResizeWidth = m_ResizeHeight = 0;
@@ -287,6 +297,9 @@ void CRenderer::ResetDevice(void)
 
 	// デバッグフォントの初期化
 	m_pDebug->Init();
+
+	// 3Dデバッグ表示の初期化
+	m_pDebug3D->Init();
 
 	CLight* pLight = CManager::GetLight();
 

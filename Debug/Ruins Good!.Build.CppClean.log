@@ -2,7 +2,6 @@ c:\users\student\desktop\ruinsgood\ruins_good\debug\ruins good!.pch
 c:\users\student\desktop\ruinsgood\ruins_good\debug\vc142.pdb
 c:\users\student\desktop\ruinsgood\ruins_good\debug\vc142.idb
 c:\users\student\desktop\ruinsgood\ruins_good\debug\pch.obj
-c:\users\student\desktop\ruinsgood\ruins_good\debug\model.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\meshfield.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\manager.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\main.obj
@@ -18,6 +17,7 @@ c:\users\student\desktop\ruinsgood\ruins_good\debug\imguimaneger.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\imgui.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\filedialogutils.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\effect.obj
+c:\users\student\desktop\ruinsgood\ruins_good\debug\debugproc3d.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\debugproc.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\camera.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\blockmanager.obj
@@ -38,6 +38,7 @@ c:\users\student\desktop\ruinsgood\ruins_good\debug\object2d.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\object.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\number.obj
 c:\users\student\desktop\ruinsgood\ruins_good\debug\motion.obj
+c:\users\student\desktop\ruinsgood\ruins_good\debug\model.obj
 c:\users\student\desktop\ruinsgood\ruins_good\ruins good!.exe
 c:\users\student\desktop\ruinsgood\ruins_good\debug\ruins good!.ilk
 c:\users\student\desktop\ruinsgood\ruins_good\ruins good!.pdb

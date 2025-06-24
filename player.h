@@ -10,12 +10,12 @@
 //*****************************************************************************
 // インクルードファイル
 //*****************************************************************************
-#include "main.h"
 #include "object.h"
 #include "model.h"
 #include "shadow.h"
 #include "motion.h"
 #include "imguimaneger.h"
+#include "debugproc3D.h"
 
 //*****************************************************************************
 // マクロ定義
@@ -58,6 +58,13 @@ private:
 	CMotion* m_pMotion;					// モーションへのポインタ
 	CMotion::TYPE m_currentMotion;		// 現在のモーション
 	bool m_isJumping;					// ジャンプ中フラグ
+
+	btRigidBody* m_pRigidBody;			// 剛体へのポインタ
+	btCollisionShape* m_pShape;			// 当たり判定の形へのポインタ
+	CDebugProc3D* m_pDebug3D;			// 3Dデバッグ表示へのポインタ
+	btScalar m_radius;					// カプセルコライダーの半径
+	btScalar m_height;					// カプセルコライダーの高さ
+
 };
 
 #endif

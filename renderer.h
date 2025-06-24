@@ -11,7 +11,7 @@
 // インクルードファイル
 //*****************************************************************************
 #include "debugproc.h"
-
+#include "debugproc3D.h"
 
 //*****************************************************************************
 // レンダラークラス
@@ -31,6 +31,7 @@ public:
 	bool NeedsReset(void) const;
 	LPDIRECT3DDEVICE9 GetDevice(void) { return m_pD3DDevice; };
 	static CDebugProc* GetDebug(void);
+	static CDebugProc3D* GetDebug3D(void) { return m_pDebug3D; }
 	void SetFPS(int fps) { m_nFPS = fps; }
 	static int GetFPS(void) { return m_nFPS; }
 	D3DXCOLOR GetBgCol(void) { return m_bgCol; }
@@ -40,6 +41,7 @@ private:
 	LPDIRECT3D9 m_pD3D;						// DirectX3Dオブジェクトへのポインタ
 	LPDIRECT3DDEVICE9 m_pD3DDevice;			// デバイスへのポインタ
 	static CDebugProc* m_pDebug;			// デバッグフォントへのポインタ
+	static CDebugProc3D* m_pDebug3D;		// 3Dデバッグ表示へのポインタ
 	D3DXCOLOR m_bgCol;						// 画面背景の色
 
 	UINT m_ResizeWidth;
