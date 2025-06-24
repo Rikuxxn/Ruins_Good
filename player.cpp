@@ -101,9 +101,9 @@ HRESULT CPlayer::Init(void)
 
 	// Bullet Physics 用カプセルコライダーの作成
 	m_radius = 20.5f;
-	m_height = 140.8f;
+	m_height = 70.0f;
 
-	m_pShape = new btCapsuleShape(m_radius, m_height - 2.0f * m_radius);
+	m_pShape = new btCapsuleShape(m_radius, m_height);
 
 	// プレイヤーの位置を元にTransform作成
 	btTransform transform;
@@ -401,6 +401,7 @@ void CPlayer::Update(void)
 	trans.setOrigin(btVector3(m_pos.x, m_pos.y, m_pos.z));
 	m_pRigidBody->setWorldTransform(trans);
 	m_pRigidBody->getMotionState()->setWorldTransform(trans);
+
 	// 位置を更新
 	m_pos.x += m_move.x;
 	m_pos.z += m_move.z;
@@ -494,8 +495,66 @@ void CPlayer::UpdateInfo(void)
 		ImGui::SetNextItemWidth(80);
 		ImGui::DragFloat("##Player_size_z", &m_size.z, 0.1f, -100.0f, 100.0f, "%.1f");
 
+		//*********************************************************************
+		// カプセルコライダー の調整
+		//*********************************************************************
+
+		ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
+
+		// ラベル
+		ImGui::Text("Capsule Collider"); // ラベルの位置ちょっと調整
+
+		ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
+
+		// 半径
+		ImGui::Text("Radius:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Player_Radius", &m_radius, 0.1f, -500.0f, 500.0f, "%.1f");
+
+		// 高さ
+		ImGui::Text("Height:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Player_Height", &m_height, 0.1f, -500.0f, 500.0f, "%.1f");
+
 		ImGui::TreePop(); // 閉じる
 	}
+
+	// カプセルコライダー更新チェック
+	static float oldRadius = -1.0f;
+	static float oldHeight = -1.0f;
+
+	if (m_radius != oldRadius || m_height != oldHeight)
+	{
+		// 既存のコリジョン形状を削除
+		if (m_pShape)
+		{
+			delete m_pShape;
+			m_pShape = NULL;
+		}
+
+		// 新しい Capsule Shape を作成
+		m_pShape = new btCapsuleShape(m_radius, m_height);
+
+		// リジッドボディに反映
+		if (m_pRigidBody)
+		{
+			m_pRigidBody->setCollisionShape(m_pShape);
+
+			//// 物理ワールドに追加
+			//btDiscreteDynamicsWorld* pWorld = CManager::GetPhysicsWorld();
+
+			//// AABBを更新
+			//if (pWorld)
+			//{
+			//	pWorld->updateSingleAabb(m_pRigidBody);
+			//}
+		}
+
+		// 値を記録
+		oldRadius = m_radius;
+		oldHeight = m_height;
+	}
+
 }
 //=============================================================================
 // 描画処理

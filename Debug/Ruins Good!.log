@@ -1,2 +1,3 @@
-﻿  debugproc3D.cpp
+﻿  player.cpp
+  LINK : 前回のインクリメンタル リンクで C:\Users\student\Desktop\RuinsGood\Ruins_Good\Ruins Good!.exe が見つからなかったか、ビルドされませんでした。フル リンクを行います。
   Ruins Good!.vcxproj -> C:\Users\student\Desktop\RuinsGood\Ruins_Good\Ruins Good!.exe
