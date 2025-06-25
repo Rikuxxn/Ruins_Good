@@ -32,6 +32,7 @@ CBlockManager::CBlockManager()
 	// 値のクリア
 	m_prevSelectedIdx = -1;
 	m_hasConsumedPayload = false;
+	m_pDebug3D = NULL;							// 3Dデバッグ表示へのポインタ
 }
 //=============================================================================
 // デストラクタ
@@ -128,138 +129,11 @@ void CBlockManager::UpdateInfo(void)
 		// 対象ブロックの取得
 		CBlock* selectedBlock = m_blocks[m_selectedIdx];
 
-		if (selectedBlock)
-		{
-			// 選択中のブロックの色を変える
-			selectedBlock->SetSelected(true);
+		// ブロック情報の調整処理
+		UpdateTransform(selectedBlock);
 
-			D3DXVECTOR3 pos = selectedBlock->GetPos();	// 選択中のブロックの位置の取得
-			D3DXVECTOR3 rot = selectedBlock->GetRot();	// 選択中のブロックの向きの取得
-			D3DXVECTOR3 size = selectedBlock->GetSize();// 選択中のブロックのサイズの取得
-
-			// ラジアン→角度に一時変換
-			D3DXVECTOR3 degRot = D3DXToDegree(rot);
-
-			//*********************************************************************
-			// POS の調整
-			//*********************************************************************
-
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
-
-			// ラベル
-			ImGui::Text("POS"); ImGui::SameLine(60); // ラベルの位置ちょっと調整
-
-			// X
-			ImGui::Text("X:"); ImGui::SameLine();
-			ImGui::SetNextItemWidth(80);
-			ImGui::DragFloat("##Block_pos_x", &pos.x, 1.0f, -9000.0f, 9000.0f, "%.1f");
-
-			// Y
-			ImGui::SameLine();
-			ImGui::Text("Y:"); ImGui::SameLine();
-			ImGui::SetNextItemWidth(80);
-			ImGui::DragFloat("##Block_pos_y", &pos.y, 1.0f, -9000.0f, 9000.0f, "%.1f");
-
-			// Z
-			ImGui::SameLine();
-			ImGui::Text("Z:"); ImGui::SameLine();
-			ImGui::SetNextItemWidth(80);
-			ImGui::DragFloat("##Block_pos_z", &pos.z, 1.0f, -9000.0f, 9000.0f, "%.1f");
-
-			//*********************************************************************
-			// ROT の調整
-			//*********************************************************************
-
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
-
-			// ラベル
-			ImGui::Text("ROT"); ImGui::SameLine(60); // ラベルの位置ちょっと調整
-
-			// X
-			ImGui::Text("X:"); ImGui::SameLine();
-			ImGui::SetNextItemWidth(80);
-			ImGui::DragFloat("##Block_rot_x", &degRot.x, 0.1f, -180.0f, 180.0f, "%.2f");
-
-			// Y
-			ImGui::SameLine();
-			ImGui::Text("Y:"); ImGui::SameLine();
-			ImGui::SetNextItemWidth(80);
-			ImGui::DragFloat("##Block_rot_y", &degRot.y, 0.1f, -180.0f, 180.0f, "%.2f");
-
-			// Z
-			ImGui::SameLine();
-			ImGui::Text("Z:"); ImGui::SameLine();
-			ImGui::SetNextItemWidth(80);
-			ImGui::DragFloat("##Block_rot_z", &degRot.z, 0.1f, -180.0f, 180.0f, "%.2f");
-
-			//*********************************************************************
-			// SIZE の調整
-			//*********************************************************************
-
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
-
-			// ラベル
-			ImGui::Text("SIZE"); ImGui::SameLine(60); // ラベルの位置ちょっと調整
-
-			// X
-			ImGui::Text("X:"); ImGui::SameLine();
-			ImGui::SetNextItemWidth(80);
-			ImGui::DragFloat("##Block_size_x", &size.x, 0.1f, -100.0f, 100.0f, "%.1f");
-
-			// Y
-			ImGui::SameLine();
-			ImGui::Text("Y:"); ImGui::SameLine();
-			ImGui::SetNextItemWidth(80);
-			ImGui::DragFloat("##Block_size_y", &size.y, 0.1f, -100.0f, 100.0f, "%.1f");
-
-			// Z
-			ImGui::SameLine();
-			ImGui::Text("Z:"); ImGui::SameLine();
-			ImGui::SetNextItemWidth(80);
-			ImGui::DragFloat("##Block_size_z", &size.z, 0.1f, -100.0f, 100.0f, "%.1f");
-
-			// 角度→ラジアンに戻す
-			rot = D3DXToRadian(degRot);
-
-			// 位置の設定
-			selectedBlock->SetPos(pos);
-
-			// 向きの設定
-			selectedBlock->SetRot(rot);
-
-			// サイズの設定
-			selectedBlock->SetSize(size);
-
-			// ここから削除ボタンを追加
-			ImGui::Dummy(ImVec2(0.0f, 10.0f));
-
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.1f, 0.1f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f));
-
-			if (ImGui::Button("Delete"))
-			{
-				m_nNumAll--;		// 総数のカウントダウン
-
-				// 選択中のブロックを削除
-				m_blocks[m_selectedIdx]->Uninit();
-
-				m_blocks.erase(m_blocks.begin() + m_selectedIdx);
-
-				// 選択インデックスを調整
-				if (m_selectedIdx >= (int)m_blocks.size())
-				{
-					m_selectedIdx = (int)m_blocks.size() - 1;
-				}
-
-				m_prevSelectedIdx = -1;
-			}
-
-			ImGui::PopStyleColor(3);
-		}
-
-		// 最後に保存
-		m_prevSelectedIdx = m_selectedIdx;
+		// コライダーサイズの調整処理
+		UpdateColliderSize(selectedBlock);
 	}
 
 	ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
@@ -335,6 +209,144 @@ void CBlockManager::UpdateInfo(void)
 	ImGui::End();
 }
 //=============================================================================
+// ブロック情報の調整処理
+//=============================================================================
+void CBlockManager::UpdateTransform(CBlock* selectedBlock)
+{
+	if (selectedBlock)
+	{
+		// 選択中のブロックの色を変える
+		selectedBlock->SetSelected(true);
+
+		D3DXVECTOR3 pos = selectedBlock->GetPos();	// 選択中のブロックの位置の取得
+		D3DXVECTOR3 rot = selectedBlock->GetRot();	// 選択中のブロックの向きの取得
+		D3DXVECTOR3 size = selectedBlock->GetSize();// 選択中のブロックのサイズの取得
+
+		// ラジアン→角度に一時変換
+		D3DXVECTOR3 degRot = D3DXToDegree(rot);
+
+		//*********************************************************************
+		// POS の調整
+		//*********************************************************************
+
+		ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
+
+		// ラベル
+		ImGui::Text("POS"); ImGui::SameLine(60); // ラベルの位置ちょっと調整
+
+		// X
+		ImGui::Text("X:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Block_pos_x", &pos.x, 1.0f, -9000.0f, 9000.0f, "%.1f");
+
+		// Y
+		ImGui::SameLine();
+		ImGui::Text("Y:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Block_pos_y", &pos.y, 1.0f, -9000.0f, 9000.0f, "%.1f");
+
+		// Z
+		ImGui::SameLine();
+		ImGui::Text("Z:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Block_pos_z", &pos.z, 1.0f, -9000.0f, 9000.0f, "%.1f");
+
+		//*********************************************************************
+		// ROT の調整
+		//*********************************************************************
+
+		ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
+
+		// ラベル
+		ImGui::Text("ROT"); ImGui::SameLine(60); // ラベルの位置ちょっと調整
+
+		// X
+		ImGui::Text("X:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Block_rot_x", &degRot.x, 0.1f, -180.0f, 180.0f, "%.2f");
+
+		// Y
+		ImGui::SameLine();
+		ImGui::Text("Y:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Block_rot_y", &degRot.y, 0.1f, -180.0f, 180.0f, "%.2f");
+
+		// Z
+		ImGui::SameLine();
+		ImGui::Text("Z:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Block_rot_z", &degRot.z, 0.1f, -180.0f, 180.0f, "%.2f");
+
+		//*********************************************************************
+		// SIZE の調整
+		//*********************************************************************
+
+		ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
+
+		// ラベル
+		ImGui::Text("SIZE"); ImGui::SameLine(60); // ラベルの位置ちょっと調整
+
+		// X
+		ImGui::Text("X:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Block_size_x", &size.x, 0.1f, -100.0f, 100.0f, "%.1f");
+
+		// Y
+		ImGui::SameLine();
+		ImGui::Text("Y:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Block_size_y", &size.y, 0.1f, -100.0f, 100.0f, "%.1f");
+
+		// Z
+		ImGui::SameLine();
+		ImGui::Text("Z:"); ImGui::SameLine();
+		ImGui::SetNextItemWidth(80);
+		ImGui::DragFloat("##Block_size_z", &size.z, 0.1f, -100.0f, 100.0f, "%.1f");
+
+		// 角度→ラジアンに戻す
+		rot = D3DXToRadian(degRot);
+
+		// 位置の設定
+		selectedBlock->SetPos(pos);
+
+		// 向きの設定
+		selectedBlock->SetRot(rot);
+
+		// サイズの設定
+		selectedBlock->SetSize(size);
+
+		// ここから削除ボタンを追加
+		ImGui::Dummy(ImVec2(0.0f, 10.0f));
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.1f, 0.1f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.0f, 0.0f, 1.0f));
+
+		if (ImGui::Button("Delete"))
+		{
+			m_nNumAll--;		// 総数のカウントダウン
+
+			// 選択中のブロックを削除
+			m_blocks[m_selectedIdx]->Uninit();
+
+			m_blocks.erase(m_blocks.begin() + m_selectedIdx);
+
+			// 選択インデックスを調整
+			if (m_selectedIdx >= (int)m_blocks.size())
+			{
+				m_selectedIdx = (int)m_blocks.size() - 1;
+			}
+
+			m_prevSelectedIdx = -1;
+		}
+
+		ImGui::PopStyleColor(3);
+	}
+
+	// 最後に保存
+	m_prevSelectedIdx = m_selectedIdx;
+}
+//=============================================================================
 // ブロックのドラッグ処理
 //=============================================================================
 void CBlockManager::UpdateDraggingBlock(void)
@@ -385,6 +397,66 @@ void CBlockManager::UpdateDraggingBlock(void)
 			m_hasConsumedPayload = false;
 		}
 	}
+}
+//=============================================================================
+// コライダーのサイズ調整処理
+//=============================================================================
+void CBlockManager::UpdateColliderSize(CBlock* selectedBlock)
+{
+	D3DXVECTOR3 colliderSize = selectedBlock->GetColliderSize();
+
+	ImGui::Dummy(ImVec2(0.0f, 10.0f));
+	ImGui::Text("COLLIDER SIZE");
+
+	ImGui::Dummy(ImVec2(0.0f, 10.0f)); // 空白を空ける
+
+	// X
+	ImGui::Text("X:"); ImGui::SameLine();
+	ImGui::SetNextItemWidth(80);
+	ImGui::DragFloat("##collider_size_x", &colliderSize.x, 0.1f, 0.1f, 100.0f, "%.1f");
+
+	// Y
+	ImGui::SameLine();
+	ImGui::Text("Y:"); ImGui::SameLine();
+	ImGui::SetNextItemWidth(80);
+	ImGui::DragFloat("##collider_size_y", &colliderSize.y, 0.1f, 0.1f, 100.0f, "%.1f");
+
+	// Z
+	ImGui::SameLine();
+	ImGui::Text("Z:"); ImGui::SameLine();
+	ImGui::SetNextItemWidth(80);
+	ImGui::DragFloat("##collider_size_z", &colliderSize.z, 0.1f, 0.1f, 100.0f, "%.1f");
+
+	// 設定して反映
+	selectedBlock->SetColliderSize(colliderSize);
+	selectedBlock->UpdateCollider();               // 再生成
+}
+//=============================================================================
+// 描画処理
+//=============================================================================
+void CBlockManager::Draw(void)
+{
+#ifdef _DEBUG
+
+	// デバイスの取得
+	CRenderer* renderer = CManager::GetRenderer();
+	LPDIRECT3DDEVICE9 pDevice = renderer->GetDevice();
+
+	for (CBlock* block : m_blocks)
+	{
+		if (block->GetRigidBody())
+		{
+			// ライトを無効にする
+			pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+			m_pDebug3D->DrawBlockCollider(block->GetRigidBody(), D3DXCOLOR(0.3f, 1.0f, 0.3f, 1.0f));
+
+			// ライトを無効にする
+			pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+		}
+	}
+
+#endif
 }
 //=============================================================================
 // タイプからファイルパスを取得

@@ -78,8 +78,20 @@ void CDebugProc3D::DrawLine3D(const D3DXVECTOR3& start, const D3DXVECTOR3& end, 
 	// 頂点フォーマット設定
 	pDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
 
+    //// ライトを無効にする
+    //pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+
+    // αテストを無効にする
+    pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+
 	// ライン描画
 	pDevice->DrawPrimitiveUP(D3DPT_LINELIST, 1, v, sizeof(VERTEX));
+
+    // αテストを有効にする
+    pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+
+    //// ライトを有効にする
+    //pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 //=============================================================================
 // カプセルコライダー描画処理
@@ -237,4 +249,115 @@ void CDebugProc3D::DrawCapsuleCollider(btCapsuleShape* capsule, const btTransfor
             DrawLine3D(D3DXVECTOR3(p4.x(), p4.y(), p4.z()), D3DXVECTOR3(p1.x(), p1.y(), p1.z()), color);
         }
     }
+}
+//=============================================================================
+// ブロックのコライダー描画処理
+//=============================================================================
+void CDebugProc3D::DrawBlockCollider(btRigidBody* rigidBody, D3DXCOLOR color)
+{
+    if (!rigidBody || !m_pLine)
+    {
+        return;
+    }
+
+    // ワールド変換取得
+    btTransform transform;
+    rigidBody->getMotionState()->getWorldTransform(transform);
+
+    btVector3 pos = transform.getOrigin();
+    btQuaternion rot = transform.getRotation();
+
+    // D3DX用の行列作成（回転）
+    D3DXQUATERNION dq(rot.x(), rot.y(), rot.z(), rot.w());
+    D3DXMATRIX matRot, matTrans, matWorld;
+    D3DXMatrixRotationQuaternion(&matRot, &dq);
+    D3DXMatrixTranslation(&matTrans, pos.x(), pos.y(), pos.z());
+
+    // ワールド行列（回転 → 平行移動）
+    matWorld = matRot * matTrans;
+
+    // デバイス取得
+    LPDIRECT3DDEVICE9 pDevice = CManager::GetRenderer()->GetDevice();
+
+    // 行列セット
+    pDevice->SetTransform(D3DTS_WORLD, &matWorld);
+
+    btCollisionShape* shape = rigidBody->getCollisionShape();
+
+    switch (shape->getShapeType())
+    {
+    case BOX_SHAPE_PROXYTYPE:
+    {
+        const btBoxShape* box = static_cast<const btBoxShape*>(shape);
+        btVector3 half = box->getHalfExtentsWithMargin();
+
+        D3DXVECTOR3 v[8] =
+        {
+            { -half.x(), -half.y(), -half.z() },
+            { +half.x(), -half.y(), -half.z() },
+            { +half.x(), +half.y(), -half.z() },
+            { -half.x(), +half.y(), -half.z() },
+            { -half.x(), -half.y(), +half.z() },
+            { +half.x(), -half.y(), +half.z() },
+            { +half.x(), +half.y(), +half.z() },
+            { -half.x(), +half.y(), +half.z() },
+        };
+
+        int indices[][2] =
+        {
+            {0,1},{1,2},{2,3},{3,0},
+            {4,5},{5,6},{6,7},{7,4},
+            {0,4},{1,5},{2,6},{3,7}
+        };
+
+        for (int i = 0; i < 12; ++i)
+        {
+            DrawLine3D(v[indices[i][0]], v[indices[i][1]], color);
+        }
+        break;
+    }
+    case SPHERE_SHAPE_PROXYTYPE:
+    {
+        const btSphereShape* sphere = static_cast<const btSphereShape*>(shape);
+        float radius = sphere->getRadius();
+        const int kSegments = 16;
+        D3DXVECTOR3 center(0, 0, 0);
+
+        for (int i = 0; i < kSegments; ++i)
+        {
+            float t1 = (2.0f * D3DX_PI * i) / kSegments;
+            float t2 = (2.0f * D3DX_PI * (i + 1)) / kSegments;
+
+            // XY
+            D3DXVECTOR3 p1 = center + D3DXVECTOR3(cosf(t1), sinf(t1), 0) * radius;
+            D3DXVECTOR3 p2 = center + D3DXVECTOR3(cosf(t2), sinf(t2), 0) * radius;
+            DrawLine3D(p1, p2, color);
+
+            // YZ
+            p1 = center + D3DXVECTOR3(0, cosf(t1), sinf(t1)) * radius;
+            p2 = center + D3DXVECTOR3(0, cosf(t2), sinf(t2)) * radius;
+            DrawLine3D(p1, p2, color);
+
+            // XZ
+            p1 = center + D3DXVECTOR3(cosf(t1), 0, sinf(t1)) * radius;
+            p2 = center + D3DXVECTOR3(cosf(t2), 0, sinf(t2)) * radius;
+            DrawLine3D(p1, p2, color);
+        }
+        break;
+    }
+    default:
+        break;
+    }
+}
+//=============================================================================
+// テストライン描画処理
+//=============================================================================
+void CDebugProc3D::DrawTestLine(void)
+{
+    // ライン
+    D3DXVECTOR3 v0(0, 0, 0);
+    D3DXVECTOR3 v1(0, 500, 0);
+
+    // 描画
+    DrawLine3D(v0, v1, D3DXCOLOR(1, 1, 0, 1));
 }

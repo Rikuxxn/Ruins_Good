@@ -14,6 +14,8 @@
 #include "model.h"
 #include "shadow.h"
 
+using namespace std;
+
 //=============================================================================
 // コンストラクタ
 //=============================================================================
@@ -123,9 +125,9 @@ HRESULT CPlayer::Init(void)
 
 	//m_pRigidBody->setAngularFactor(btVector3(0, 0, 0)); // これで角運動量の影響をゼロに
 
-	//// キネマティック設定：重力・物理演算無視、自前で位置制御
-	//m_pRigidBody->setCollisionFlags(m_pRigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
-	//m_pRigidBody->setActivationState(DISABLE_DEACTIVATION);
+	// キネマティック設定：重力・物理演算無視、自前で位置制御
+	m_pRigidBody->setCollisionFlags(m_pRigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+	m_pRigidBody->setActivationState(DISABLE_DEACTIVATION);
 
 	// 物理ワールドに追加
 	btDiscreteDynamicsWorld* pWorld = CManager::GetPhysicsWorld();
@@ -227,7 +229,7 @@ void CPlayer::Update(void)
 
 			// 倒し具合を 0.0～1.0 にマッピング
 			float normalizedMagnitude = (magnitude - DEADZONE) / (32767.0f - DEADZONE);
-			normalizedMagnitude = min(normalizedMagnitude, 1.0f);
+			normalizedMagnitude = std::min(normalizedMagnitude, 1.0f);
 
 			// スティックの方向ベクトルに倒し具合を掛ける
 			stickX *= normalizedMagnitude;
@@ -264,6 +266,7 @@ void CPlayer::Update(void)
 			m_move.x -= sinf(CamRot.y + -D3DX_PI * 0.25f) * PLAYER_SPEED;
 			m_move.z -= cosf(CamRot.y + -D3DX_PI * 0.25f) * PLAYER_SPEED;
 
+			// 移動している方向に向きを変える
 			m_rotDest.y = CamRot.y - D3DX_PI * 0.25f;
 		}
 		else if (pInputKeyboard->GetPress(DIK_S) == true)
@@ -272,6 +275,7 @@ void CPlayer::Update(void)
 			m_move.x -= sinf(CamRot.y + -D3DX_PI * 0.75f) * PLAYER_SPEED;
 			m_move.z -= cosf(CamRot.y + -D3DX_PI * 0.75f) * PLAYER_SPEED;
 
+			// 移動している方向に向きを変える
 			m_rotDest.y = CamRot.y - D3DX_PI * 0.75f;
 		}
 		else
@@ -280,6 +284,7 @@ void CPlayer::Update(void)
 			m_move.z -= sinf(CamRot.y) * PLAYER_SPEED;
 			m_move.x += cosf(CamRot.y) * PLAYER_SPEED;
 
+			// 移動している方向に向きを変える
 			m_rotDest.y = CamRot.y - D3DX_PI * 0.5f;
 		}
 	}
@@ -293,6 +298,7 @@ void CPlayer::Update(void)
 			m_move.x -= sinf(CamRot.y + D3DX_PI * 0.25f) * PLAYER_SPEED;
 			m_move.z -= cosf(CamRot.y + D3DX_PI * 0.25f) * PLAYER_SPEED;
 
+			// 移動している方向に向きを変える
 			m_rotDest.y = CamRot.y + (D3DX_PI * 0.25f);
 		}
 		else if (pInputKeyboard->GetPress(DIK_S) == true)
@@ -301,6 +307,7 @@ void CPlayer::Update(void)
 			m_move.x -= sinf(CamRot.y + D3DX_PI * 0.75f) * PLAYER_SPEED;
 			m_move.z -= cosf(CamRot.y + D3DX_PI * 0.75f) * PLAYER_SPEED;
 
+			// 移動している方向に向きを変える
 			m_rotDest.y = CamRot.y + (D3DX_PI * 0.75f);
 		}
 		else
@@ -309,6 +316,7 @@ void CPlayer::Update(void)
 			m_move.z += sinf(CamRot.y) * PLAYER_SPEED;
 			m_move.x -= cosf(CamRot.y) * PLAYER_SPEED;
 
+			// 移動している方向に向きを変える
 			m_rotDest.y = CamRot.y + D3DX_PI * 0.5f;
 		}
 
@@ -321,6 +329,7 @@ void CPlayer::Update(void)
 		m_move.x -= sinf(CamRot.y) * PLAYER_SPEED;
 		m_move.z -= cosf(CamRot.y) * PLAYER_SPEED;
 
+		// 移動している方向に向きを変える
 		m_rotDest.y = CamRot.y;
 	}
 	else if (pInputKeyboard->GetPress(DIK_S) == true)
@@ -331,6 +340,7 @@ void CPlayer::Update(void)
 		m_move.x += sinf(CamRot.y) * PLAYER_SPEED;
 		m_move.z += cosf(CamRot.y) * PLAYER_SPEED;
 
+		// 移動している方向に向きを変える
 		m_rotDest.y = CamRot.y + D3DX_PI;
 	}
 
@@ -343,7 +353,6 @@ void CPlayer::Update(void)
 		m_pMotion->StartBlendMotion(CMotion::TYPE_JUMP, 10);
 		m_currentMotion = CMotion::TYPE_JUMP;
 	}
-
 
 	// 接地していないなら常に重力をかける
 	if (m_pos.y > 0.0f)
@@ -364,6 +373,42 @@ void CPlayer::Update(void)
 
 		m_isJumping = false;
 	}
+
+	//bool onGround = OnGround(CManager::GetPhysicsWorld(), m_pRigidBody, 0.1f);
+
+	//// ジャンプ開始は「接地している」ことを条件にする
+	//if (!m_isJumping && onGround && (pInputKeyboard->GetTrigger(DIK_SPACE) || pInputJoypad->GetTrigger(CInputJoypad::JOYKEY_A)))
+	//{
+	//	m_isJumping = true;
+	//	m_move.y = MAX_JUMP_POWER;
+
+	//	m_pMotion->StartBlendMotion(CMotion::TYPE_JUMP, 10);
+	//	m_currentMotion = CMotion::TYPE_JUMP;
+	//}
+
+	//// 重力はジャンプ中かつ接地していない場合のみ適用
+	//if (!onGround)
+	//{
+	//	m_move.y += MAX_GRAVITY;  // 重力を加える
+	//}
+	//else
+	//{
+	//	// 着地処理
+	//	if (m_isJumping)
+	//	{
+	//		m_pMotion->StartBlendMotion(CMotion::TYPE_NEUTRAL, 15);
+	//		m_currentMotion = CMotion::TYPE_NEUTRAL;
+	//	}
+
+	//	m_isJumping = false;
+	//	m_move.y = 0.0f;
+
+	//	// Y位置は物理で制御されているので、m_pos.yを物理の位置に合わせて更新するのが望ましい
+	//	btTransform trans;
+	//	m_pRigidBody->getMotionState()->getWorldTransform(trans);
+	//	btVector3 pos = trans.getOrigin();
+	//	m_pos.y = pos.y();
+	//}
 
 	// モーション切り替え
 	if (!m_isJumping)  // ジャンプ中はモーションを変えない
@@ -596,7 +641,7 @@ void CPlayer::Draw(void)
 		btTransform transform;
 		m_pRigidBody->getMotionState()->getWorldTransform(transform);
 
-		m_pDebug3D->DrawCapsuleCollider((btCapsuleShape*)m_pShape, transform, D3DXCOLOR(1, 1, 1, 1));
+		m_pDebug3D->DrawCapsuleCollider((btCapsuleShape*)m_pShape, transform, D3DXCOLOR(1, 0, 0, 1));
 	}
 
 #endif
@@ -622,4 +667,31 @@ D3DXVECTOR3 CPlayer::GetRot(void)
 bool CPlayer::GetPlayerUse(void)
 {
 	return m_playerUse;
+}
+//=============================================================================
+// 接触判定
+//=============================================================================
+bool CPlayer::OnGround(btDiscreteDynamicsWorld* world, btRigidBody* playerBody, float rayLength)
+{
+	btTransform trans;
+	playerBody->getMotionState()->getWorldTransform(trans);
+	btVector3 start = trans.getOrigin();
+	btVector3 end = start - btVector3(0, rayLength, 0);
+
+	struct RayResultCallback : public btCollisionWorld::ClosestRayResultCallback
+	{
+		RayResultCallback(const btVector3& from, const btVector3& to)
+			: btCollisionWorld::ClosestRayResultCallback(from, to) {}
+	};
+
+	RayResultCallback rayCallback(start, end);
+	world->rayTest(start, end, rayCallback);
+
+	if (rayCallback.hasHit())
+	{
+		// 距離やヒットした物体のチェックもここで可能
+		return true;
+	}
+
+	return false;
 }

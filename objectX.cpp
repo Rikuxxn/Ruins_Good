@@ -12,6 +12,8 @@
 #include "renderer.h"
 #include "manager.h"
 
+using namespace std;
+
 //=============================================================================
 // コンストラクタ
 //=============================================================================
@@ -27,6 +29,7 @@ CObjectX::CObjectX()
 	m_pBuffMat = NULL;						// マテリアルへのポインタ
 	m_dwNumMat = NULL;						// マテリアル数
 	m_mtxWorld = {};						// ワールドマトリックス
+	m_modelSize = INIT_VEC3;				// モデルの元サイズ（全体の幅・高さ・奥行き）
 	for (int nCnt = 0; nCnt < MAX_PATH; nCnt++)
 	{
 		m_szPath[nCnt] = NULL;					// ファイルパス
@@ -116,12 +119,29 @@ HRESULT CObjectX::Init(void)
 		// 頂点バッファのロック
 		m_pMesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&pVtxBuff);
 
+		// AABB計算用の最小・最大値初期化
+		D3DXVECTOR3 vMin(FLT_MAX, FLT_MAX, FLT_MAX);
+		D3DXVECTOR3 vMax(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
-		// 最大値とかはいったんなし
+		// 最大値・最小値を求める
+		for (int nCnt = 0; nCnt < nNumVtx; nCnt++)
+		{
+			D3DXVECTOR3* p = (D3DXVECTOR3*)(pVtxBuff + sizeFVF * nCnt);
 
+			vMin.x = min(vMin.x, p->x);
+			vMin.y = min(vMin.y, p->y);
+			vMin.z = min(vMin.z, p->z);
+
+			vMax.x = max(vMax.x, p->x);
+			vMax.y = max(vMax.y, p->y);
+			vMax.z = max(vMax.z, p->z);
+		}
 
 		// 頂点バッファのアンロック
 		m_pMesh->UnlockVertexBuffer();
+
+		// サイズ = 最大 - 最小
+		m_modelSize = vMax - vMin;
 
 		D3DXMATERIAL* pMat;// マテリアルへのポインタ
 
@@ -298,6 +318,13 @@ D3DXVECTOR3 CObjectX::GetRot(void)
 D3DXVECTOR3 CObjectX::GetSize(void)
 {
 	return m_size;
+}
+//=============================================================================
+// モデルの元サイズの取得
+//=============================================================================
+D3DXVECTOR3 CObjectX::GetModelSize(void)
+{
+	return m_modelSize;
 }
 //=============================================================================
 // Xファイルパスの設定処理

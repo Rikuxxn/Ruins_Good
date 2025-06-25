@@ -11,6 +11,7 @@
 // インクルードファイル
 //*****************************************************************************
 #include "block.h"
+#include "debugproc3D.h"
 
 //*****************************************************************************
 // ブロックマネージャークラス
@@ -24,8 +25,10 @@ public:
     void Init(void);
     void Uninit(void);
     void UpdateInfo(void); // ImGuiでの表示
+    void UpdateTransform(CBlock* selectedBlock);
     void UpdateDraggingBlock(void);
-
+    void UpdateColliderSize(CBlock* selectedBlock);
+    void Draw(void);
     static CBlock* CreateBlock(CBlock::TYPE type, D3DXVECTOR3 pos);
     static const char* GetFilePathFromType(CBlock::TYPE type);
     void SaveToJson(const char* filename);
@@ -39,7 +42,9 @@ private:
     static int m_nNumAll;                   // 総数
     static int m_selectedIdx;               // 選択中のインデックス
     int m_prevSelectedIdx;
-    bool m_hasConsumedPayload ;      // ペイロード生成済みフラグ
+    bool m_hasConsumedPayload ;             // ペイロード生成済みフラグ
+    CDebugProc3D* m_pDebug3D;			    // 3Dデバッグ表示へのポインタ
+
 };
 
 #endif

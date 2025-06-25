@@ -42,6 +42,7 @@ private:
 	LPDIRECT3DDEVICE9 m_pD3DDevice;			// デバイスへのポインタ
 	static CDebugProc* m_pDebug;			// デバッグフォントへのポインタ
 	static CDebugProc3D* m_pDebug3D;		// 3Dデバッグ表示へのポインタ
+
 	D3DXCOLOR m_bgCol;						// 画面背景の色
 
 	UINT m_ResizeWidth;

@@ -68,6 +68,7 @@ public:
 	static bool GetisPaused(void);
 	// 他クラスから物理ワールドを触りたい時用
 	static btDiscreteDynamicsWorld* GetPhysicsWorld(void) { return m_pDynamicsWorld; }
+	static void CheckCollisions(void);
 
 private:
 	static CRenderer* m_pRenderer;				// レンダラーへのポインタ

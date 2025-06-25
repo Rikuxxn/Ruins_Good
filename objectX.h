@@ -31,7 +31,8 @@ public:
 	const char* GetPath(void);
 	D3DXVECTOR3 GetPos(void);
 	D3DXVECTOR3 GetRot(void);
-	D3DXVECTOR3 GetSize(void);
+	D3DXVECTOR3 GetSize(void);		// 拡大率
+	D3DXVECTOR3 GetModelSize(void);	// モデルの元サイズ
 	void SetPath(const char* path);
 	void SetSize(D3DXVECTOR3 size);
 	void SetPos(D3DXVECTOR3 pos);
@@ -50,6 +51,7 @@ private:
 	DWORD m_dwNumMat;					// マテリアル数
 	D3DXMATRIX m_mtxWorld;				// ワールドマトリックス
 	char m_szPath[MAX_PATH];			// ファイルパス
+	D3DXVECTOR3 m_modelSize;			// モデルの元サイズ（全体の幅・高さ・奥行き）
 };
 
 #endif

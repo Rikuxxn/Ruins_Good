@@ -164,7 +164,7 @@ HRESULT CManager::Init(HINSTANCE hInstance, HWND hWnd)
 	//CMeshfield::Create(D3DXVECTOR3(0.0f, 0.0f, 0.0f), 1200.0f, 1200.0f);
 
 	// プレイヤーの生成
-	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 0.0f, -300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
+	m_pPlayer = CPlayer::Create(D3DXVECTOR3(0.0f, 100.0f, -300.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
 	////// ブロックの生成
 	//m_pBlock = CBlockManager::CreateBlock(CBlock::TYPE_WOODBOX, D3DXVECTOR3(-300.0f, 110.0f, 0.0f));
@@ -547,4 +547,31 @@ CImGuiManager* CManager::GetImGuiManager(void)
 bool CManager::GetisPaused(void)
 {
 	return m_isPaused;
+}
+//=============================================================================
+// 当たり判定処理
+//=============================================================================
+void CManager::CheckCollisions(void)
+{
+	auto world = GetPhysicsWorld();
+	if (!world) return;
+
+	int numManifolds = world->getDispatcher()->getNumManifolds();
+	for (int i = 0; i < numManifolds; ++i)
+	{
+		btPersistentManifold* manifold = world->getDispatcher()->getManifoldByIndexInternal(i);
+		const btCollisionObject* obA = manifold->getBody0();
+		const btCollisionObject* obB = manifold->getBody1();
+
+		int numContacts = manifold->getNumContacts();
+		for (int j = 0; j < numContacts; ++j)
+		{
+			btManifoldPoint& pt = manifold->getContactPoint(j);
+			if (pt.getDistance() < 0.f)
+			{
+				// 衝突時の処理をここに書くか、
+				// イベント通知やコールバックを使う設計にしてもよい
+			}
+		}
+	}
 }

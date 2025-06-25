@@ -11,6 +11,7 @@
 // インクルードファイル
 //*****************************************************************************
 #include "objectX.h"
+#include "debugproc3D.h"
 
 //*****************************************************************************
 // ブロッククラス
@@ -50,6 +51,7 @@ public:
 	HRESULT Init(void);
 	void Uninit(void);
 	void Update(void);
+	void UpdateCollider(void);
 	void Draw(void);
 	void SetType(TYPE type) { m_Type = type; }
 	TYPE GetType(void) const { return m_Type; }
@@ -58,14 +60,27 @@ public:
 	bool IsSelected(void) const { return m_bSelected; }
 	int GetTextureIndex() const { return m_nIdxTexture; }// 画像表示の時に使う
 	static const char* GetTexPathFromType(TYPE type);
+	void CreatePhysics(const D3DXVECTOR3& pos, const D3DXVECTOR3& size);
+	void ReleasePhysics(void);  // 破棄用
+	bool IsStaticBlock(void) const;
+	btRigidBody* GetRigidBody(void) const { return m_pRigidBody; }
+	D3DXVECTOR3 GetColliderSize(void) const;
+	void SetColliderSize(const D3DXVECTOR3& size);
 
 private:
 	char m_szPath[MAX_PATH];	// ファイルパス
 	TYPE m_Type;				// 種類
 	D3DXCOLOR m_col;			// アルファ値
 	D3DXCOLOR m_baseCol;		// ベースのアルファ値
-	bool m_bSelected;
-	int m_nIdxTexture;
+	bool m_bSelected;			// 選択フラグ
+	int m_nIdxTexture;			// テクスチャインデックス
+	btRigidBody* m_pRigidBody;	// 剛体へのポインタ
+	btCollisionShape* m_pShape;	// 当たり判定の形へのポインタ
+	CDebugProc3D* m_pDebug3D;	// 3Dデバッグ表示へのポインタ
+	D3DXVECTOR3 m_prevSize;		// 前回のサイズ
+	D3DXVECTOR3 m_colliderSize; // コライダーサイズ
+
+
 };
 
 #endif

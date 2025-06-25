@@ -43,6 +43,7 @@ public:
 	D3DXVECTOR3 GetPos(void);
 	D3DXVECTOR3 GetRot(void);
 	bool GetPlayerUse(void);
+	bool OnGround(btDiscreteDynamicsWorld* world, btRigidBody* playerBody, float rayLength);
 
 private:
 	D3DXVECTOR3 m_pos;					// ˆÊ’u
